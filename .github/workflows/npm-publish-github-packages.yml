@@ -68,6 +68,8 @@ jobs:
         run: npm install -g pnpm
       - name: Install dependencies
         run: pnpm install
+      - name: Install Jest for CI
+        run: pnpm add -D jest jest-environment-jsdom @types/jest ts-jest
       - name: Run Jest
         run: pnpm run test
 
