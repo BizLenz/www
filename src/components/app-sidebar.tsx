@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GalleryVerticalEnd } from "lucide-react";
+import { isError, getErrorMessage } from "@/lib/utils";
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [userData, setUserData] = useState<UserData | null>(null);
@@ -46,10 +47,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
 
         setUserData(dummyUserData);
-      } catch (err: any) {
-        setUserError(err.message || "Failed to load dummy user data.");
-        console.error("Error loading dummy user data:", err);
+      } catch (err: unknown) {
+        const errorMessage = getErrorMessage(err);
+        setUserError(errorMessage);
         setUserData(null);
+
+        if (isError(err)) {
+          console.error("Error loading dummy user data:", err.message);
+        } else {
+          console.error("Caught something unexpected:", err);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -76,17 +83,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         await new Promise((resolve) => setTimeout(resolve, 800));
 
         setTeamData(dummyTeamData);
-      } catch (err: any) {
-        setTeamError(err.message || "Failed to load dummy team data.");
-        console.error("Error loading dummy team data:", err);
+      } catch (err: unknown) {
+        const errorMessage = getErrorMessage(err);
+        setTeamError(errorMessage);
         setTeamData(null);
+
+        if (isError(err)) {
+          console.error("Error loading dummy team data:", err.message);
+        } else {
+          console.error("Caught something unexpected:", err);
+        }
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchDummyUserData();
-    fetchDummyTeamData();
+    void fetchDummyUserData();
+    void fetchDummyTeamData();
   }, []);
 
   if (isLoading) {
