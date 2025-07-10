@@ -1,105 +1,145 @@
-import {
-  Bot,
-  ChartPie,
-  ChevronDown, FileText, Map,
-  Settings2,
-  SquareTerminal
-} from "lucide-react";
+"use client";
 
+import * as React from "react";
+import { useEffect, useState } from "react";
+
+// Static imports
+import { staticAppData } from "@/lib/app-sidebar-items";
+import type { TeamData, UserData } from "@/types/sidebar";
+
+import { NavMain } from "@/components/nav-main";
+import { NavReports } from "@/components/nav-reports";
+import { NavUser } from "@/components/nav-user";
+import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
+  SidebarRail,
 } from "@/components/ui/sidebar";
-import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
+import { GalleryVerticalEnd } from "lucide-react";
 
-// Menu items.
-const items = [
-  {
-    title: "사업평가",
-    url: "#",
-    icon: SquareTerminal,
-  },
-  {
-    title: "모델 선택",
-    url: "#",
-    icon: Bot,
-  },
-  {
-    title: "분석 설정",
-    url: "#",
-    icon: Settings2,
-  },
-  {
-    title: "보고서",
-    url: "#",
-    icon: FileText,
-  },
-  {
-    title: "시각화",
-    url: "#",
-    icon: ChartPie,
-  },
-  {
-    title: "로드맵",
-    url: "#",
-    icon: Map,
-  },
-];
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [userData, setUserData] = useState<UserData | null>(null);
+  const [teamData, setTeamData] = useState<TeamData[] | null>(null);
 
-export function AppSidebar() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const [userError, setUserError] = useState<string | null>(null);
+  const [teamError, setTeamError] = useState<string | null>(null);
+
+  // --- DUMMY DATA FETCHES FOR DEVELOPMENT ---
+  useEffect(() => {
+    const fetchDummyUserData = async () => {
+      try {
+        setIsLoading(true);
+        setUserError(null);
+
+        const dummyUserData: UserData = {
+          name: "Lorem Ipsum",
+          email: "lorem@ipsum.com",
+          avatar: "",
+        };
+
+        await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
+
+        setUserData(dummyUserData);
+      } catch (err: any) {
+        setUserError(err.message || "Failed to load dummy user data.");
+        console.error("Error loading dummy user data:", err);
+        setUserData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const fetchDummyTeamData = async () => {
+      try {
+        setIsLoading(true);
+        setTeamError(null);
+
+        const dummyTeamData: TeamData[] = [
+          {
+            name: "Lorem Inc",
+            logo: GalleryVerticalEnd,
+            plan: "Enterprise",
+          },
+          {
+            name: "Ipsum Inc",
+            logo: GalleryVerticalEnd,
+            plan: "Enterprise",
+          },
+        ];
+
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        setTeamData(dummyTeamData);
+      } catch (err: any) {
+        setTeamError(err.message || "Failed to load dummy team data.");
+        console.error("Error loading dummy team data:", err);
+        setTeamData(null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDummyUserData();
+    fetchDummyTeamData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <Skeleton className="h-10 w-full" />
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={staticAppData.navMain} />
+          <NavReports reports={staticAppData.reports} />
+        </SidebarContent>
+        <SidebarFooter>
+          <Skeleton className="h-10 w-full" />
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    );
+  }
+
+  // TODO: Add UI fallback for fetch error
+  if (userError || teamError) {
+  }
+
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <SidebarMenuButton>
-                  Select Project
-                  <ChevronDown className="ml-auto" />
-                </SidebarMenuButton>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-[--radix-popper-anchor-width]">
-                <DropdownMenuItem>
-                  <span>Test 1</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <span>Test 2</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        {teamData ? (
+          <TeamSwitcher teams={teamData} />
+        ) : (
+          // Fallback
+          <TeamSwitcher teams={[]} />
+        )}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Application</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <NavMain items={staticAppData.navMain} />
+        <NavReports reports={staticAppData.reports} />
       </SidebarContent>
+      <SidebarFooter>
+        {userData ? (
+          <NavUser user={userData} />
+        ) : (
+          // Fallback
+          <NavUser
+            user={{
+              name: "Guest",
+              email: "guest@example.com",
+              avatar: "",
+            }}
+          />
+        )}
+      </SidebarFooter>
+      <SidebarRail />
     </Sidebar>
   );
 }

@@ -1,0 +1,35 @@
+import type { LucideIcon } from "lucide-react";
+
+export interface UserData {
+  name: string;
+  email: string;
+  avatar?: string; // s3 link
+}
+
+export interface TeamData {
+  name: string;
+  logo: LucideIcon;
+  plan: string;
+}
+
+export interface NavMainItem {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  isActive?: boolean;
+  items?: {
+    title: string;
+    url?: string;
+  }[];
+}
+
+export interface ReportItem {
+  name: string;
+  url: string;
+  icon: LucideIcon;
+}
+
+export interface StaticAppData {
+  navMain: NavMainItem[];
+  reports: ReportItem[];
+}
