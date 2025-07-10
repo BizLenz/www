@@ -15,7 +15,7 @@
     "preview": "next build && next start",
     "start": "next start",
     "typecheck": "tsc --noEmit",
-    "test": "jest --config jest.config.cjs"
+    "test": "jest --config jest.config.cts"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
