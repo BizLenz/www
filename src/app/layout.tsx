@@ -2,6 +2,8 @@ import "@/styles/globals.css";
 
 import {type Metadata} from "next";
 import {Geist} from "next/font/google";
+import {auth} from "@/server/auth";
+import {SessionProvider} from "next-auth/react";
 
 export const metadata: Metadata = {
     title: "BizLenz",
@@ -14,13 +16,15 @@ const geist = Geist({
     variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
                                        children,
                                    }: Readonly<{ children: React.ReactNode }>) {
+    const session = await auth()
+
     return (
         <html lang="en" className={`dark ${geist.variable}`}>
         <body>
-        {children}
+        <SessionProvider session={session}>{children}</SessionProvider>
         </body>
         </html>
     );
