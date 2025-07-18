@@ -16,6 +16,10 @@ declare module "next-auth" {
     } & DefaultSession["user"];
   }
 
+  interface JWT {
+    id: string;
+  }
+
   // interface User {
   //   // ...other properties
   //   // role: UserRole;
@@ -41,6 +45,13 @@ export const authConfig = {
      */
   ],
   callbacks: {
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        token.id = user.id;
+      }
+      return token;
+    },
+
     session: ({ session, token }) => ({
       ...session,
       user: {
