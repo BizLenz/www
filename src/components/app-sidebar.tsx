@@ -34,9 +34,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
 
     // --- DUMMY DATA FETCHES FOR DEVELOPMENT ---
     useEffect(() => {
-        if (sessionStatus === "authenticated" && fastApiToken &&
-            !isLoadingFastApiToken &&
-            !errorFastApiToken) {
+        if (sessionStatus === "authenticated" && fastApiToken && !isLoadingFastApiToken && !errorFastApiToken) {
 
             // --- Fetch User Data ---
             const fetchUserData = async () => {
@@ -50,9 +48,9 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                     // TODO: Replace with actual FastAPI user data fetch later
                     console.log("DashboardComponent: Simulating user data fetch with token:", fastApiToken);
                     const dummyUserData: UserData = {
-                        name: session?.user?.name || "Lorem Ipsum",
-                        email: session?.user?.email || "lorem@ipsum.com",
-                        avatar: session?.user?.image || "",
+                        name: session?.user?.name ?? "Lorem Ipsum",
+                        email: session?.user?.email ?? "lorem@ipsum.com",
+                        avatar: session?.user?.image ?? "",
                     };
 
                     await new Promise((resolve) => setTimeout(resolve, 800));
@@ -72,8 +70,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                     const errorMessage = getErrorMessage(err);
                     setUserError(errorMessage);
                     setUserData(null);
-                    if (isError(err)) console.error("Error loading user data:", err.message);
-                    else console.error("Caught unexpected error loading user data:", err);
+                    if (isError(err)) console.error("Error loading user data:", err.message); else console.error("Caught unexpected error loading user data:", err);
                 } finally {
                     setIsLoadingUserData(false);
                 }
@@ -90,18 +87,11 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                     // --- BEGIN MOCK TEAM DATA SIMULATION ---
                     // TODO: Replace with actual FastAPI team data fetch later
                     console.log("DashboardComponent: Simulating team data fetch with token:", fastApiToken);
-                    const dummyTeamData: TeamData[] = [
-                        {
-                            name: "Lorem Inc",
-                            logo: GalleryVerticalEnd,
-                            plan: "Enterprise",
-                        },
-                        {
-                            name: "Ipsum Inc",
-                            logo: GalleryVerticalEnd,
-                            plan: "Enterprise",
-                        },
-                    ];
+                    const dummyTeamData: TeamData[] = [{
+                        name: "Lorem Inc", logo: GalleryVerticalEnd, plan: "Enterprise",
+                    }, {
+                        name: "Ipsum Inc", logo: GalleryVerticalEnd, plan: "Enterprise",
+                    },];
 
                     await new Promise((resolve) => setTimeout(resolve, 1200)); // Simulate latency
                     setTeamData(dummyTeamData);
@@ -120,8 +110,7 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                     const errorMessage = getErrorMessage(err);
                     setTeamError(errorMessage);
                     setTeamData(null);
-                    if (isError(err)) console.error("Error loading team data:", err.message);
-                    else console.error("Caught unexpected error loading team data:", err);
+                    if (isError(err)) console.error("Error loading team data:", err.message); else console.error("Caught unexpected error loading team data:", err);
                 } finally {
                     setIsLoadingTeamData(false);
                 }
@@ -130,65 +119,51 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
             void fetchUserData();
             void fetchTeamData();
         }
-    }, [sessionStatus, fastApiToken, isLoadingUserData, userData, isLoadingTeamData, teamData, session?.user?.name, session?.user?.email, session?.user?.image]);
+    }, [sessionStatus, fastApiToken, isLoadingUserData, userData, isLoadingTeamData, teamData, session?.user?.name, session?.user?.email, session?.user?.image, errorFastApiToken, isLoadingFastApiToken]);
 
     if (sessionStatus === "loading") {
-        return (
-            <Sidebar collapsible="icon" {...props}>
-                <SidebarHeader>
-                    <Skeleton className="h-10 w-full"/>
-                </SidebarHeader>
-                <SidebarContent>
-                    <NavMain items={staticAppData.navMain}/>
-                    <NavReports reports={staticAppData.reports}/>
-                </SidebarContent>
-                <SidebarFooter>
-                    <Skeleton className="h-10 w-full"/>
-                </SidebarFooter>
-                <SidebarRail/>
-            </Sidebar>
-        );
-    }
-
-    if (isLoadingFastApiToken || errorFastApiToken || !fastApiToken) {
-        return (
-            <Sidebar collapsible="icon" {...props}>
-                <SidebarHeader>
-                    <Skeleton className="h-10 w-full"/>
-                </SidebarHeader>
-                <SidebarContent></SidebarContent>
-                <SidebarFooter>
-                    <Skeleton className="h-10 w-full"/>
-                </SidebarFooter>
-            </Sidebar>
-        )
-    }
-
-    return (
-        <Sidebar collapsible="icon" {...props}>
+        return (<Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                {isLoadingTeamData ? (
-                    <Skeleton className="h-10 w-full"/>
-                ) : teamError ? (
-                    <div style={{color: "red", padding: "8px"}}>Error: {teamError}</div>
-                ) : (
-                    <TeamSwitcher teams={teamData}/>
-                )}
+                <Skeleton className="h-10 w-full"/>
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={staticAppData.navMain}/>
                 <NavReports reports={staticAppData.reports}/>
             </SidebarContent>
             <SidebarFooter>
-                {isLoadingUserData ? (
-                    <Skeleton className="h-10 w-full"/>
-                ) : userError ? (
-                    <div style={{color: "red", padding: "8px"}}>Error: {userError}</div>
-                ) : (
-                    <NavUser user={userData || {name: "Guest", email: "guest@example.com", avatar: ""}}/>
-                )}
+                <Skeleton className="h-10 w-full"/>
             </SidebarFooter>
             <SidebarRail/>
-        </Sidebar>
-    );
+        </Sidebar>);
+    }
+
+    if (isLoadingFastApiToken || errorFastApiToken || !fastApiToken) {
+        return (<Sidebar collapsible="icon" {...props}>
+            <SidebarHeader>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarHeader>
+            <SidebarContent></SidebarContent>
+            <SidebarFooter>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarFooter>
+        </Sidebar>)
+    }
+
+    return (<Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+            {isLoadingTeamData ? (<Skeleton className="h-10 w-full"/>) : teamError ? (
+                <div style={{color: "red", padding: "8px"}}>Error: {teamError}</div>) : (
+                <TeamSwitcher teams={teamData}/>)}
+        </SidebarHeader>
+        <SidebarContent>
+            <NavMain items={staticAppData.navMain}/>
+            <NavReports reports={staticAppData.reports}/>
+        </SidebarContent>
+        <SidebarFooter>
+            {isLoadingUserData ? (<Skeleton className="h-10 w-full"/>) : userError ? (
+                <div style={{color: "red", padding: "8px"}}>Error: {userError}</div>) : (
+                <NavUser user={userData ?? {name: "Guest", email: "guest@example.com", avatar: ""}}/>)}
+        </SidebarFooter>
+        <SidebarRail/>
+    </Sidebar>);
 }
