@@ -150,24 +150,18 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
         );
     }
 
-    if (isLoadingFastApiToken) {
+    if (isLoadingFastApiToken || errorFastApiToken || !fastApiToken) {
         return (
             <Sidebar collapsible="icon" {...props}>
                 <SidebarHeader>
                     <Skeleton className="h-10 w-full"/>
                 </SidebarHeader>
+                <SidebarContent></SidebarContent>
                 <SidebarFooter>
                     <Skeleton className="h-10 w-full"/>
                 </SidebarFooter>
             </Sidebar>
         )
-    }
-    // TODO: make it to fit the overall style
-    if (errorFastApiToken) {
-        return <div style={{color: "red"}}>Error getting backend access: {errorFastApiToken}</div>;
-    }
-    if (!fastApiToken) {
-        return <div>Backend token not available. Please try refreshing.</div>;
     }
 
     return (
