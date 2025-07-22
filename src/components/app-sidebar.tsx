@@ -1,158 +1,169 @@
 "use client";
 
 import * as React from "react";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 
 // Static imports
-import { staticAppData } from "@/lib/app-sidebar-items";
-import type { TeamData, UserData } from "@/types/sidebar";
+import {staticAppData} from "@/lib/app-sidebar-items";
+import type {TeamData, UserData} from "@/types/sidebar";
 
-import { NavMain } from "@/components/nav-main";
-import { NavReports } from "@/components/nav-reports";
-import { NavUser } from "@/components/nav-user";
-import { TeamSwitcher } from "@/components/team-switcher";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarRail,
-} from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { GalleryVerticalEnd } from "lucide-react";
-import { isError, getErrorMessage } from "@/lib/utils";
+import {NavMain} from "@/components/nav-main";
+import {NavReports} from "@/components/nav-reports";
+import {NavUser} from "@/components/nav-user";
+import {TeamSwitcher} from "@/components/team-switcher";
+import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail,} from "@/components/ui/sidebar";
+import {Skeleton} from "@/components/ui/skeleton";
+import {GalleryVerticalEnd} from "lucide-react";
+import {getErrorMessage, isError} from "@/lib/utils";
+import {useSession} from "next-auth/react";
+import {useBackendToken} from "@/hooks/use-backend-token";
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [userData, setUserData] = useState<UserData | null>(null);
-  const [teamData, setTeamData] = useState<TeamData[] | null>(null);
+export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
+    const {data: session, status: sessionStatus} = useSession();
+    const {fastApiToken, isLoadingFastApiToken, errorFastApiToken} = useBackendToken();
 
-  const [isLoading, setIsLoading] = useState(true);
+    // User State
+    const [userData, setUserData] = useState<UserData | null>(null);
+    const [isLoadingUserData, setIsLoadingUserData] = useState(false);
+    const [userError, setUserError] = useState<string | null>(null);
 
-  const [userError, setUserError] = useState<string | null>(null);
-  const [teamError, setTeamError] = useState<string | null>(null);
+    // Team State
+    const [teamData, setTeamData] = useState<TeamData[] | null>(null);
+    const [isLoadingTeamData, setIsLoadingTeamData] = useState(false);
+    const [teamError, setTeamError] = useState<string | null>(null);
 
-  // --- DUMMY DATA FETCHES FOR DEVELOPMENT ---
-  useEffect(() => {
-    const fetchDummyUserData = async () => {
-      try {
-        setIsLoading(true);
-        setUserError(null);
+    // --- DUMMY DATA FETCHES FOR DEVELOPMENT ---
+    useEffect(() => {
+        if (sessionStatus === "authenticated" && fastApiToken && !isLoadingFastApiToken && !errorFastApiToken) {
 
-        const dummyUserData: UserData = {
-          name: "Lorem Ipsum",
-          email: "lorem@ipsum.com",
-          avatar: "",
-        };
+            // --- Fetch User Data ---
+            const fetchUserData = async () => {
+                if (isLoadingUserData || userData) return;
 
-        await new Promise((resolve) => setTimeout(resolve, 800)); // 800ms delay
+                setIsLoadingUserData(true);
+                setUserError(null);
 
-        setUserData(dummyUserData);
-      } catch (err: unknown) {
-        const errorMessage = getErrorMessage(err);
-        setUserError(errorMessage);
-        setUserData(null);
+                try {
+                    // --- BEGIN MOCK USER DATA SIMULATION ---
+                    // TODO: Replace with actual FastAPI user data fetch later
+                    console.log("DashboardComponent: Simulating user data fetch with token:", fastApiToken);
+                    const dummyUserData: UserData = {
+                        name: session?.user?.name ?? "Lorem Ipsum",
+                        email: session?.user?.email ?? "lorem@ipsum.com",
+                        avatar: session?.user?.image ?? "",
+                    };
 
-        if (isError(err)) {
-          console.error("Error loading dummy user data:", err.message);
-        } else {
-          console.error("Caught something unexpected:", err);
+                    await new Promise((resolve) => setTimeout(resolve, 800));
+                    setUserData(dummyUserData);
+                    // --- END MOCK USER DATA SIMULATION ---
+
+                    /*
+                    // const res = await fetch("http://your-fastapi-url/api/user-profile", {
+                    //   headers: { Authorization: `Bearer ${fastApiToken}` },
+                    // });
+                    // if (!res.ok) throw new Error("Failed to fetch user data");
+                    // const realData = await res.json();
+                    // setUserData(realData);
+                    */
+
+                } catch (err: unknown) {
+                    const errorMessage = getErrorMessage(err);
+                    setUserError(errorMessage);
+                    setUserData(null);
+                    if (isError(err)) console.error("Error loading user data:", err.message); else console.error("Caught unexpected error loading user data:", err);
+                } finally {
+                    setIsLoadingUserData(false);
+                }
+            };
+
+            // --- Fetch Team Data ---
+            const fetchTeamData = async () => {
+                if (isLoadingTeamData || teamData) return;
+
+                setIsLoadingTeamData(true);
+                setTeamError(null);
+
+                try {
+                    // --- BEGIN MOCK TEAM DATA SIMULATION ---
+                    // TODO: Replace with actual FastAPI team data fetch later
+                    console.log("DashboardComponent: Simulating team data fetch with token:", fastApiToken);
+                    const dummyTeamData: TeamData[] = [{
+                        name: "Lorem Inc", logo: GalleryVerticalEnd, plan: "Enterprise",
+                    }, {
+                        name: "Ipsum Inc", logo: GalleryVerticalEnd, plan: "Enterprise",
+                    },];
+
+                    await new Promise((resolve) => setTimeout(resolve, 1200)); // Simulate latency
+                    setTeamData(dummyTeamData);
+                    // --- END MOCK TEAM DATA SIMULATION ---
+
+                    /*
+                    // const res = await fetch("http://fastapi.url/api/teams", {
+                    //   headers: { Authorization: `Bearer ${fastApiToken}` },
+                    // });
+                    // if (!res.ok) throw new Error("Failed to fetch team data");
+                    // const realData = await res.json();
+                    // setTeamData(realData);
+                    */
+
+                } catch (err: unknown) {
+                    const errorMessage = getErrorMessage(err);
+                    setTeamError(errorMessage);
+                    setTeamData(null);
+                    if (isError(err)) console.error("Error loading team data:", err.message); else console.error("Caught unexpected error loading team data:", err);
+                } finally {
+                    setIsLoadingTeamData(false);
+                }
+            };
+
+            void fetchUserData();
+            void fetchTeamData();
         }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    }, [sessionStatus, fastApiToken, isLoadingUserData, userData, isLoadingTeamData, teamData, session?.user?.name, session?.user?.email, session?.user?.image, errorFastApiToken, isLoadingFastApiToken]);
 
-    const fetchDummyTeamData = async () => {
-      try {
-        setIsLoading(true);
-        setTeamError(null);
+    if (sessionStatus === "loading") {
+        return (<Sidebar collapsible="icon" {...props}>
+            <SidebarHeader>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarHeader>
+            <SidebarContent>
+                <NavMain items={staticAppData.navMain}/>
+                <NavReports reports={staticAppData.reports}/>
+            </SidebarContent>
+            <SidebarFooter>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarFooter>
+            <SidebarRail/>
+        </Sidebar>);
+    }
 
-        const dummyTeamData: TeamData[] = [
-          {
-            name: "Lorem Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-          },
-          {
-            name: "Ipsum Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-          },
-        ];
+    if (isLoadingFastApiToken || errorFastApiToken || !fastApiToken) {
+        return (<Sidebar collapsible="icon" {...props}>
+            <SidebarHeader>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarHeader>
+            <SidebarContent></SidebarContent>
+            <SidebarFooter>
+                <Skeleton className="h-10 w-full"/>
+            </SidebarFooter>
+        </Sidebar>)
+    }
 
-        await new Promise((resolve) => setTimeout(resolve, 800));
-
-        setTeamData(dummyTeamData);
-      } catch (err: unknown) {
-        const errorMessage = getErrorMessage(err);
-        setTeamError(errorMessage);
-        setTeamData(null);
-
-        if (isError(err)) {
-          console.error("Error loading dummy team data:", err.message);
-        } else {
-          console.error("Caught something unexpected:", err);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    void fetchDummyUserData();
-    void fetchDummyTeamData();
-  }, []);
-
-  if (isLoading) {
-    return (
-      <Sidebar collapsible="icon" {...props}>
+    return (<Sidebar collapsible="icon" {...props}>
         <SidebarHeader>
-          <Skeleton className="h-10 w-full" />
+            {isLoadingTeamData ? (<Skeleton className="h-10 w-full"/>) : teamError ? (
+                <div style={{color: "red", padding: "8px"}}>Error: {teamError}</div>) : (
+                <TeamSwitcher teams={teamData}/>)}
         </SidebarHeader>
         <SidebarContent>
-          <NavMain items={staticAppData.navMain} />
-          <NavReports reports={staticAppData.reports} />
+            <NavMain items={staticAppData.navMain}/>
+            <NavReports reports={staticAppData.reports}/>
         </SidebarContent>
         <SidebarFooter>
-          <Skeleton className="h-10 w-full" />
+            {isLoadingUserData ? (<Skeleton className="h-10 w-full"/>) : userError ? (
+                <div style={{color: "red", padding: "8px"}}>Error: {userError}</div>) : (
+                <NavUser user={userData ?? {name: "Guest", email: "guest@example.com", avatar: ""}}/>)}
         </SidebarFooter>
-        <SidebarRail />
-      </Sidebar>
-    );
-  }
-
-  // TODO: Add UI fallback for fetch error
-  if (userError || teamError) {
-  }
-
-  return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        {teamData ? (
-          <TeamSwitcher teams={teamData} />
-        ) : (
-          // Fallback
-          <TeamSwitcher teams={[]} />
-        )}
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={staticAppData.navMain} />
-        <NavReports reports={staticAppData.reports} />
-      </SidebarContent>
-      <SidebarFooter>
-        {userData ? (
-          <NavUser user={userData} />
-        ) : (
-          // Fallback
-          <NavUser
-            user={{
-              name: "Guest",
-              email: "guest@example.com",
-              avatar: "",
-            }}
-          />
-        )}
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
-  );
+        <SidebarRail/>
+    </Sidebar>);
 }

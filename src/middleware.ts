@@ -1,4 +1,3 @@
-// middleware.ts
 import {auth} from "@/server/auth";
 import {NextResponse} from "next/server";
 
