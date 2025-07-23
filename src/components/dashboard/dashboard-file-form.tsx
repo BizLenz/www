@@ -1,40 +1,23 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
 
-import { Button } from "@/components/ui/button";
-import {
-    Form,
-    FormControl,
-    FormDescription,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 import {router} from "next/client";
 
 const formSchema = z.object({
     category: z.string({
         required_error: "Please select a category.",
-    }),
-    files: z.any().optional(), // Placeholder for file DND
+    }), files: z.any().optional(), // Placeholder for file DND
 });
 
-export function DashboardFileForm({
-                            }) {
+export function DashboardFileForm({}) {
     const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
+        resolver: zodResolver(formSchema), defaultValues: {
             category: "",
         },
     });
@@ -45,8 +28,7 @@ export function DashboardFileForm({
         router.push("/files");
     }
 
-    return (
-        <div className="border-1 rounded-xl p-5">
+    return (<div className="border-1 rounded-xl p-5">
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-4">
                 {/* Title and Subheading */}
@@ -59,15 +41,13 @@ export function DashboardFileForm({
                 <FormField
                     control={form.control}
                     name="category"
-                    render={({ field }) => (
-                        <FormItem>
-                            <div className="flex flex-row
-gap-4">
+                    render={({field}) => (<FormItem>
+                        <div className="flex flex-row gap-4">
                             <FormLabel>분석 종류</FormLabel>
                             <Select onValueChange={field.onChange} defaultValue={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="종류를 선택하세요" />
+                                        <SelectValue placeholder="종류를 선택하세요"/>
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -76,30 +56,28 @@ gap-4">
                                     <SelectItem value="visual">시각화</SelectItem>
                                 </SelectContent>
                             </Select>
-                            </div>
-                            <FormMessage />
-                        </FormItem>
-                    )}
+                        </div>
+                        <FormMessage/>
+                    </FormItem>)}
                 />
 
                 {/* Row with File DND (Placeholder) */}
                 <FormField
                     control={form.control}
                     name="files"
-                    render={({ field }) => (
-                        <FormItem>
-                            <div className="flex flex-col gap-4">
+                    render={() => (<FormItem>
+                        <div className="flex flex-col gap-4">
                             <FormLabel>파일 선택</FormLabel>
                             <FormControl>
                                 {/* TODO: Make actual dnd logics */}
-                                <div className="flex h-32 w-full items-center justify-center rounded-md border border-dashed text-sm">
+                                <div
+                                    className="flex h-32 w-full items-center justify-center rounded-md border border-dashed text-sm">
                                     클릭하거나, 파일을 드래그 앤 드랍해주세요.
                                 </div>
                             </FormControl>
-                            <FormMessage />
-                            </div>
-                        </FormItem>
-                    )}
+                            <FormMessage/>
+                        </div>
+                    </FormItem>)}
                 />
 
                 {/* Button */}
@@ -108,6 +86,5 @@ gap-4">
                 </div>
             </form>
         </Form>
-        </div>
-    );
+    </div>);
 }

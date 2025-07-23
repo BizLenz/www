@@ -14,13 +14,13 @@ export default function Page() {
     const [teamName, setTeamName] = useState<string>();
     const [storageUsage, setStorageUsage] = useState<number>();
 
+    // TODO: fetch from backend
     useEffect(() => {
         setTeamName("test");
         setStorageUsage(800.5);
     }, []);
 
-    return (
-        <SidebarInset>
+    return (<SidebarInset>
             <div className="flex flex-1 flex-col gap-4 p-10 pt-0">
                 {/* Title */}
                 <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
@@ -33,16 +33,12 @@ export default function Page() {
                     </p>
                     <div className="flex flex-1 flex-row items-center justify-end gap-4">
                         <p className="text-muted-foreground text-sm">사용중인 저장공간</p>
-                        {storageUsage ? (
-                            <>
+                        {storageUsage ? (<>
                                 <small className="text-sm leading-none font-medium">
                                     {storageUsage}MiB/1GiB
                                 </small>
                                 <Progress value={storageUsage / 10.24} className="w-[20%]"/>
-                            </>
-                        ) : (
-                            <></>
-                        )}
+                            </>) : (<></>)}
                     </div>
                 </div>
                 {/* ROW 1; Stats */}
@@ -78,6 +74,5 @@ export default function Page() {
                                   body={"Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"}/>
                 </div>
             </div>
-        </SidebarInset>
-    );
+        </SidebarInset>);
 }
