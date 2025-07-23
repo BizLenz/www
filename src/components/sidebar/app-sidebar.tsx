@@ -7,10 +7,10 @@ import {useEffect, useState} from "react";
 import {staticAppData} from "@/lib/app-sidebar-items";
 import type {TeamData, UserData} from "@/types/sidebar";
 
-import {NavMain} from "@/components/nav-main";
-import {NavReports} from "@/components/nav-reports";
-import {NavUser} from "@/components/nav-user";
-import {TeamSwitcher} from "@/components/team-switcher";
+import {NavMain} from "@/components/sidebar/nav-main";
+import {NavReports} from "@/components/sidebar/nav-reports";
+import {NavUser} from "@/components/sidebar/nav-user";
+import {TeamSwitcher} from "@/components/sidebar/team-switcher";
 import {Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail,} from "@/components/ui/sidebar";
 import {Skeleton} from "@/components/ui/skeleton";
 import {GalleryVerticalEnd} from "lucide-react";
