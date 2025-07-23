@@ -23,9 +23,13 @@ export function DashboardFileForm({}) {
     });
 
     // TODO: make call to backend
-    function onSubmit(data: z.infer<typeof formSchema>) {
+    async function onSubmit(data: z.infer<typeof formSchema>) {
         console.log("Form submitted with data:", data);
-        router.push("/files");
+        try {
+            await router.push("/files");
+        } catch (error) {
+            console.error("Navigation failed:", error);
+        }
     }
 
     return (<div className="border-1 rounded-xl p-5">
