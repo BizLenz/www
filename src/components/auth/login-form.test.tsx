@@ -1,6 +1,6 @@
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {LoginForm} from './login-form';
-import {mockSetSession, signIn} from '../../__mocks__/next-auth/react';
+import {mockSetSession, signIn} from '../../../__mocks__/next-auth/react';
 import {useRouter, useSearchParams} from 'next/navigation';
 import '@testing-library/jest-dom';
 
