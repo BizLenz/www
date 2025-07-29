@@ -20,10 +20,10 @@ export default async function RootLayout({
     const session = await auth()
 
     return (<html lang="en" className={`dark ${geist.variable}`}>
-        <body>
-        <SessionProvider session={session}>
-            <BackendTokenProvider>{children}</BackendTokenProvider>
-        </SessionProvider>
-        </body>
-        </html>);
+    <body>
+    <SessionProvider session={session}>
+        <BackendTokenProvider>{children}</BackendTokenProvider>
+    </SessionProvider>
+    </body>
+    </html>);
 }
