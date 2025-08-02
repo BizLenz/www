@@ -1,6 +1,8 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import StatusBubble from "@/components/common/status-bubble";
+import type {File} from "@/types/file";
 
-export function DashboardRecentView() {
+export function DashboardRecentView({recentFiles}: { recentFiles: File[] }) {
     return (<div className="flex flex-col gap-4 border-1 rounded-xl p-5 h-full">
         <h2 className="text-2xl font-bold">최근 활동 목록</h2>
         <Table>
@@ -13,11 +15,23 @@ export function DashboardRecentView() {
             </TableHeader>
             <TableBody>
                 {/* TODO: fetch from backend */}
-                <TableRow>
-                    <TableCell className="font-medium">기본분석</TableCell>
-                    <TableCell>완료</TableCell>
-                    <TableCell className="text-right">A_LOREM_IPSUM.pdf</TableCell>
-                </TableRow>
+                {recentFiles.length > 0 ? (
+                    recentFiles.map((file) => (
+                        <TableRow key={file.id}>
+                            <TableCell className="font-medium">기본분석</TableCell> {/* Placeholder */}
+                            <TableCell>
+                                <StatusBubble status={file.status}/>
+                            </TableCell>
+                            <TableCell className="text-right">{file.fileName}</TableCell>
+                        </TableRow>
+                    ))
+                ) : (
+                    <TableRow>
+                        <TableCell colSpan={3} className="h-24 text-center">
+                            최근 활동이 없습니다.
+                        </TableCell>
+                    </TableRow>
+                )}
             </TableBody>
         </Table>
     </div>)
