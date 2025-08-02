@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
     type ColumnDef,
@@ -13,7 +11,7 @@ import {
     useReactTable,
     type VisibilityState,
 } from "@tanstack/react-table"
-import {toast, Toaster} from "sonner"
+import {toast} from "sonner"
 import {Button} from "@/components/ui/button"
 import {Checkbox} from "@/components/ui/checkbox"
 import {Input} from "@/components/ui/input"
@@ -61,7 +59,7 @@ export const columns: ColumnDef<File>[] = [
         header: "상태",
         cell: ({row}) => {
             const status = row.getValue<File["status"]>("status")
-            return <StatusBubble status={status} />;
+            return <StatusBubble status={status}/>;
         },
     },
     {
@@ -230,31 +228,6 @@ export function FilesTable({data}: { data: File[] }) {
                     </Button>
                 </div>
             </div>
-        </div>
-    )
-}
-
-// DUMMY DATA
-export default function FilesTablePage() {
-    const mockData: File[] = [
-        {id: "file1", fileName: "분기별_실적_보고서.pdf", uploadDate: "2025-07-24", status: "완료"},
-        {id: "file2", fileName: "프로젝트_알파_기획안.docx", uploadDate: "2025-07-23", status: "대기중"},
-        {id: "file3", fileName: "사용자_인터뷰_녹취록.txt", uploadDate: "2025-07-23", status: "대기중"},
-        {id: "file4", fileName: "2025년_마케팅_예산안.pdf", uploadDate: "2025-07-22", status: "완료"},
-        {id: "file5", fileName: "경쟁사_분석_자료.pdf", uploadDate: "2025-07-21", status: "분석중"},
-        {id: "file6", fileName: "신규_기능_요구사항.pdf", uploadDate: "2025-07-20", status: "대기중"},
-        {id: "file7", fileName: "서버_로그_20250719.log", uploadDate: "2025-07-19", status: "완료"},
-        {id: "file8", fileName: "디자인_시안_v1.pdf", uploadDate: "2025-07-18", status: "완료"},
-        {id: "file9", fileName: "고객_피드백_종합.csv", uploadDate: "2025-07-17", status: "분석중"},
-        {id: "file10", fileName: "API_명세서_v2.pdf", uploadDate: "2025-07-16", status: "대기중"},
-        {id: "file11", fileName: "백엔드_아키텍처.pdf", uploadDate: "2025-07-15", status: "완료"},
-        {id: "file12", fileName: "주간_업무_보고.md", uploadDate: "2025-07-14", status: "대기중"},
-    ]
-
-    return (
-        <div className="container mx-auto py-10">
-            <Toaster richColors position="top-right"/>
-            <FilesTable data={mockData}/>
         </div>
     )
 }

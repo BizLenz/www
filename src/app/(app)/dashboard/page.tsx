@@ -9,16 +9,35 @@ import {Button} from "@/components/ui/button";
 import Notification from "@/components/notification";
 import {DashboardFileForm} from "@/components/dashboard/dashboard-file-form";
 import {DashboardRecentView} from "@/components/dashboard/dashboard-recent-view";
+import type {File} from "@/types/file";
+import {useFileStore} from "@/store/file-store";
 
 export default function Page() {
     const [teamName, setTeamName] = useState<string>();
     const [storageUsage, setStorageUsage] = useState<number>();
 
+    // Data for the table
+    const [filesData, setFilesData] = useState<File[]>([]);
+
+    const { files, isLoading, error, fetchFiles } = useFileStore(
+        (state) => ({
+            files: state.files,
+            isLoading: state.isLoading,
+            error: state.error,
+            fetchFiles: state.fetchFiles,
+        })
+    );
+
     // TODO: fetch from backend
     useEffect(() => {
         setTeamName("test");
         setStorageUsage(800.5);
-    }, []);
+        if (files.length === 0 && !isLoading) {
+            void fetchFiles();
+        }
+    }, [files.length, isLoading, fetchFiles]);
+
+    const recentActivityData = filesData.slice(0, 5);
 
     return (
         <SidebarInset>
@@ -62,7 +81,7 @@ export default function Page() {
                         <DashboardFileForm/>
                     </div>
                     <div className="flex-1">
-                        <DashboardRecentView/>
+                        <DashboardRecentView recentFiles={recentActivityData}/>
                     </div>
                 </div>
                 {/* ROW 3; Notifications */}
