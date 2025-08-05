@@ -2,7 +2,7 @@ import {create} from 'zustand';
 import {type File, fileSchema} from "@/types/file";
 import {z} from "zod";
 
-interface FileState {
+export interface FileState {
     files: File[];
     isLoading: boolean;
     error: string | null;
@@ -24,13 +24,11 @@ const mockData: File[] = [
     {id: "file12", fileName: "주간_업무_보고.md", uploadDate: "2025-07-14", status: "대기중"},
 ];
 
-
-export const useFileStore = create<FileState>((set, get) => ({
+export const useFileStore = create<FileState>()((set, get) => ({
     files: [],
     isLoading: false,
     error: null,
     fetchFiles: async () => {
-        // Only fetch if not already loading and files are empty (or force refresh logic)
         if (get().isLoading || get().files.length > 0) {
             console.log("Files already loaded or loading, skipping fetch.");
             return;
@@ -38,7 +36,6 @@ export const useFileStore = create<FileState>((set, get) => ({
 
         set({isLoading: true, error: null});
         try {
-            // Simulate API call
             const response = await new Promise<File[]>((resolve) =>
                 setTimeout(() => {
                     resolve(mockData);

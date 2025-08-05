@@ -18,7 +18,7 @@ export function DashboardRecentView({recentFiles}: { recentFiles: File[] }) {
                 {recentFiles.length > 0 ? (
                     recentFiles.map((file) => (
                         <TableRow key={file.id}>
-                            <TableCell className="font-medium">기본분석</TableCell> {/* Placeholder */}
+                            <TableCell className="font-medium">기본분석</TableCell>
                             <TableCell>
                                 <StatusBubble status={file.status}/>
                             </TableCell>
