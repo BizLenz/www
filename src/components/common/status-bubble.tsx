@@ -5,11 +5,11 @@ import {Badge} from "@/components/ui/badge";
 type FileStatus = "완료" | "분석중" | "대기중";
 
 interface StatusProps {
-    status: FileStatus | string;
+    status: FileStatus;
 }
 
 function renderStatus(
-    status: FileStatus | string
+    status: FileStatus
 ) {
     switch (status) {
         case "완료":

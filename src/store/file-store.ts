@@ -2,6 +2,7 @@ import {create} from 'zustand';
 import {type File, fileSchema} from "@/types/file";
 import {z} from "zod";
 import {useShallow} from "zustand/shallow";
+import {getErrorMessage} from "@/lib/utils";
 
 export interface FileState {
     files: File[];
@@ -44,12 +45,21 @@ export const useFileStore = create<FileState>()((set, get) => ({
             );
             const validatedFiles = z.array(fileSchema).parse(response);
             set({files: validatedFiles, isLoading: false});
-        } catch (err: any) {
-            console.error("Failed to fetch files:", err);
-            set({
-                error: "파일 데이터를 불러오는 데 실패했습니다: " + (err.message || "알 수 없는 오류"),
-                isLoading: false,
-            });
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                console.error("Failed to fetch files:", err.message);
+                set({
+                    error: "파일 데이터를 불러오는 데 실패했습니다: " + (err.message || "알 수 없는 오류"),
+                    isLoading: false,
+                });
+            } else {
+                console.error("Failed to fetch files:", err);
+                set({
+                    error:
+                        "파일 데이터를 불러오는 데 실패했습니다: " + getErrorMessage(err),
+                    isLoading: false,
+                });
+            }
         }
     },
 }));

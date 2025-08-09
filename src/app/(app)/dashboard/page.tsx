@@ -9,17 +9,13 @@ import {Button} from "@/components/ui/button";
 import Notification from "@/components/notification";
 import {DashboardFileForm} from "@/components/dashboard/dashboard-file-form";
 import {DashboardRecentView} from "@/components/dashboard/dashboard-recent-view";
-import type {File} from "@/types/file";
-import {type FileState, useFileStore, useFileStoreShallow} from "@/store/file-store";
-import {useShallow} from "zustand/shallow";
+import {useFileStoreShallow} from "@/store/file-store";
 
 export default function Page() {
     const [teamName, setTeamName] = useState<string>();
     const [storageUsage, setStorageUsage] = useState<number>();
 
     // Data for the table
-    const [filesData, setFilesData] = useState<File[]>([]);
-
     const {files, isLoading, error, fetchFiles} = useFileStoreShallow();
 
     // TODO: fetch from backend

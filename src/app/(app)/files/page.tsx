@@ -5,8 +5,7 @@ import {useEffect, useState} from "react";
 import {SidebarInset} from "@/components/ui/sidebar";
 import {FilesTable} from "@/components/files-table";
 import {Toaster} from "sonner";
-import {type FileState, useFileStore, useFileStoreShallow} from "@/store/file-store";
-import {useShallow} from "zustand/shallow";
+import {useFileStoreShallow} from "@/store/file-store";
 
 export default function Files() {
     const [storageUsage, setStorageUsage] = useState<number>();
@@ -17,7 +16,7 @@ export default function Files() {
     useEffect(() => {
         setStorageUsage(800.5);
         void fetchFiles();
-    }, []);
+    }, [fetchFiles]);
 
     return (
         <SidebarInset>
