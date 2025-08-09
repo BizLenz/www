@@ -10,7 +10,7 @@ import Notification from "@/components/notification";
 import {DashboardFileForm} from "@/components/dashboard/dashboard-file-form";
 import {DashboardRecentView} from "@/components/dashboard/dashboard-recent-view";
 import type {File} from "@/types/file";
-import {type FileState, useFileStore} from "@/store/file-store";
+import {type FileState, useFileStore, useFileStoreShallow} from "@/store/file-store";
 import {useShallow} from "zustand/shallow";
 
 export default function Page() {
@@ -20,16 +20,7 @@ export default function Page() {
     // Data for the table
     const [filesData, setFilesData] = useState<File[]>([]);
 
-    const {files, isLoading, error, fetchFiles} = useFileStore(
-        useShallow(
-            (state: FileState) => ({
-                files: state.files,
-                isLoading: state.isLoading,
-                error: state.error,
-                fetchFiles: state.fetchFiles,
-            })
-        )
-    );
+    const {files, isLoading, error, fetchFiles} = useFileStoreShallow();
 
     // TODO: fetch from backend
     useEffect(() => {

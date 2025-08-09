@@ -5,19 +5,13 @@ import {useEffect, useState} from "react";
 import {SidebarInset} from "@/components/ui/sidebar";
 import {FilesTable} from "@/components/files-table";
 import {Toaster} from "sonner";
-import {useFileStore} from "@/store/file-store";
+import {type FileState, useFileStore, useFileStoreShallow} from "@/store/file-store";
+import {useShallow} from "zustand/shallow";
 
 export default function Files() {
     const [storageUsage, setStorageUsage] = useState<number>();
 
-    const {files, isLoading, error, fetchFiles} = useFileStore(
-        (state) => ({
-            files: state.files,
-            isLoading: state.isLoading,
-            error: state.error,
-            fetchFiles: state.fetchFiles,
-        })
-    );
+    const {files, isLoading, error, fetchFiles} = useFileStoreShallow();
 
     // TODO: fetch from backend
     useEffect(() => {

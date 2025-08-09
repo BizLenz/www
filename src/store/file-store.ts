@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {type File, fileSchema} from "@/types/file";
 import {z} from "zod";
+import {useShallow} from "zustand/shallow";
 
 export interface FileState {
     files: File[];
@@ -52,3 +53,13 @@ export const useFileStore = create<FileState>()((set, get) => ({
         }
     },
 }));
+
+export const useFileStoreShallow = () =>
+    useFileStore(
+        useShallow((state: FileState) => ({
+            files: state.files,
+            isLoading: state.isLoading,
+            error: state.error,
+            fetchFiles: state.fetchFiles,
+        }))
+    );
