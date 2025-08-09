@@ -19,7 +19,7 @@ export const staticAppData: StaticAppData = {
       items: [
         {
           title: "파일 관리",
-          url: "#",
+          url: "files",
         },
         {
           title: "심층 분석",
