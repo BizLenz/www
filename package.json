@@ -57,7 +57,7 @@
     "@types/node": "^20.14.10",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "eslint": "^9.23.0",
+    "eslint": "^9.33.0",
     "eslint-config-next": "^15.2.3",
     "jest": "^30.0.4",
     "jest-environment-jsdom": "^30.0.4",
