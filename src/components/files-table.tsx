@@ -18,6 +18,7 @@ import {Input} from "@/components/ui/input"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import StatusBubble from "@/components/common/status-bubble";
 import type {File} from "@/types/file"
+import {AnalyzeButton} from "@/components/common/analyze-button";
 
 export const columns: ColumnDef<File>[] = [
     {
@@ -84,14 +85,11 @@ export const columns: ColumnDef<File>[] = [
                             결과확인
                         </Button>
                     ) : (
-                        <Button
-                            size="sm"
-                            onClick={() =>
-                                toast.success(`'${file.fileName}' 분석을 요청했습니다.`)
-                            }
-                        >
-                            분석요청
-                        </Button>
+                        <AnalyzeButton
+                            fileName="test.csv"
+                            onConfirm={() => {
+                            }}
+                        />
                     )}
                 </div>
             )
