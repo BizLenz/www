@@ -30,7 +30,7 @@ export default function ReportView({ result }: { result: AnalysisResult }) {
         result.evaluations?.map((e) => ({
             name: e.evaluationType,
             score: e.score,
-        })) || [];
+        })) ?? [];
 
     return (
         <div className="flex flex-1 flex-col gap-6 p-10">
@@ -139,12 +139,12 @@ export default function ReportView({ result }: { result: AnalysisResult }) {
                                 <TableRow key={idx}>
                                     <TableCell>{e.evaluationType}</TableCell>
                                     <TableCell>
-                                        {Object.entries(e.metrics || {})
+                                        {Object.entries(e.metrics ?? {})
                                             .map(([k, v]) => `${k}: ${v}`)
                                             .join(", ")}
                                     </TableCell>
                                     <TableCell>
-                                        {Object.entries(e.benchmarkData || {})
+                                        {Object.entries(e.benchmarkData ?? {})
                                             .map(([k, v]) => `${k}: ${v}`)
                                             .join(", ")}
                                     </TableCell>
