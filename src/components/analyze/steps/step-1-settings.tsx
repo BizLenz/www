@@ -27,7 +27,7 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
 
     const toggleScope = useCallback(
         (scope: string, checked: boolean) => {
-            const current = settings.analysisScope || [];
+            const current = settings.analysisScope ?? [];
             if (checked) {
                 setSettings(fileId, { analysisScope: [...current, scope] });
             } else {
@@ -45,7 +45,7 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
             <div className="space-y-2">
                 <div className="text-lg font-semibold">평가 양식 선택</div>
                 <ProgramComboBox
-                    value={settings.program || ""}
+                    value={settings.program ?? ""}
                     onChange={(value) => setSettings(fileId, { program: value })}
                 />
             </div>
@@ -66,7 +66,7 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
                         >
                             <Checkbox
                                 id={option}
-                                checked={settings.analysisScope?.includes(option) || false}
+                                checked={settings.analysisScope?.includes(option) ?? false}
                                 onCheckedChange={(checked) =>
                                     toggleScope(option, Boolean(checked))
                                 }

@@ -40,7 +40,7 @@ export function ProgramComboBox({
     const [uncontrolledValue, setUncontrolledValue] = React.useState("");
 
     // If value prop is provided, use controlled mode
-    const value = controlledValue !== undefined ? controlledValue : uncontrolledValue;
+    const value = controlledValue ?? uncontrolledValue;
     const setValue = (val: string) => {
         if (onChange) {
             onChange(val);

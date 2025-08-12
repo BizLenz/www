@@ -86,9 +86,8 @@ export const columns: ColumnDef<File>[] = [
                         </Button>
                     ) : (
                         <AnalyzeButton
-                            fileName="test.csv"
-                            onConfirm={() => {
-                            }}
+                            fileId={file.id}
+                            fileName={file.fileName}
                         />
                     )}
                 </div>

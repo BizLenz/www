@@ -27,7 +27,7 @@ export const useAnalyzeStore = create<AnalyzeState>((set, get) => ({
                 },
             },
         })),
-    getFileSettings: (fileId) => get().files[fileId] || {},
+    getFileSettings: (fileId) => get().files[fileId] ?? {},
     resetFile: (fileId) =>
         set((state) => {
             const newFiles = { ...state.files };
