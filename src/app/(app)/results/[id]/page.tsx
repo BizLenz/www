@@ -1,57 +1,80 @@
 import { SidebarInset } from "@/components/ui/sidebar";
-import {
-    type AnalysisResult,
-    AnalysisResultSchema,
-} from "@/types/analysis-result";
+import { AnalysisResultSchema, type AnalysisResult } from "@/types/analysis-result";
+import ReportView from "@/app/(app)/results/[id]/report-view";
 
 async function getResult(id: string): Promise<AnalysisResult> {
-    // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    // Dummy data
-    const dummyData = {
+    const dummyData: AnalysisResult = {
         id,
         fileName: `example-file-${id}.txt`,
         createdAt: new Date(Date.now() - 1000 * 60 * 60).toISOString(),
         updatedAt: new Date().toISOString(),
+        evaluations: [
+            {
+                evaluationType: "market",
+                evaluationCategory: "growth_potential",
+                score: 85.5,
+                grade: "A",
+                title: "시장 성장성 평가",
+                summary: "향후 5년간 높은 성장세 예상",
+                detailedFeedback: "경쟁사 대비 기술 우위가 뚜렷함",
+                strengths: ["기술 경쟁력", "시장 점유율 상승", "브랜드 인지도"],
+                weaknesses: ["마케팅 예산 부족", "신규 시장 진입 장벽"],
+                recommendations: ["마케팅 투자 확대", "파트너십 강화"],
+                evaluationCriteria: { criteria1: "시장 규모", criteria2: "성장률" },
+                metrics: { CAGR: 12.5, MarketShare: 15 },
+                benchmarkData: { industryAverage: 10 },
+                weight: 0.25,
+                importanceLevel: "high",
+                status: "completed",
+                confidenceScore: 92.3,
+                evaluatorType: "human",
+                evaluatorInfo: { name: "홍길동", role: "시장 분석가" },
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                evaluatedAt: new Date().toISOString(),
+                version: 1,
+                parentEvaluationId: null,
+            },
+            {
+                evaluationType: "financial",
+                evaluationCategory: "profitability",
+                score: 72.3,
+                grade: "B+",
+                title: "재무 안정성 평가",
+                summary: "수익성은 양호하나 부채 비율이 다소 높음",
+                detailedFeedback: "영업이익률은 업계 평균 이상",
+                strengths: ["영업이익률 우수", "현금 흐름 안정"],
+                weaknesses: ["부채 비율 높음"],
+                recommendations: ["부채 상환 계획 수립"],
+                evaluationCriteria: { criteria1: "ROE", criteria2: "Debt Ratio" },
+                metrics: { ROE: 15, DebtRatio: 65 },
+                benchmarkData: { industryAverage: 50 },
+                weight: 0.2,
+                importanceLevel: "medium",
+                status: "completed",
+                confidenceScore: 88.1,
+                evaluatorType: "ai",
+                evaluatorInfo: { model: "GPT-5" },
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString(),
+                evaluatedAt: new Date().toISOString(),
+                version: 1,
+                parentEvaluationId: null,
+            },
+        ],
     };
 
     return AnalysisResultSchema.parse(dummyData);
 }
 
-export default async function ResultPage({
-                                             params,
-                                         }: {
-    params: Promise<{ id: string }>;
-}) {
-    const { id } = await params;
-    const result = await getResult(id);
+export default async function ResultPage({ params }: { params: { id: string } }) {
+    const result = await getResult(params.id);
 
     return (
         <SidebarInset>
-            <div className="flex flex-1 flex-col gap-4 p-10">
-                <div className="flex items-baseline">
-                    <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
-                        결과 페이지
-                    </h1>
-                </div>
-                <div className="border rounded p-4 space-y-2">
-                    <p>
-                        <strong>파일 ID:</strong> {result.id}
-                    </p>
-                    <p>
-                        <strong>파일 이름:</strong> {result.fileName}
-                    </p>
-                    <p>
-                        <strong>생성일:</strong>{" "}
-                        {new Date(result.createdAt).toLocaleString()}
-                    </p>
-                    <p>
-                        <strong>업데이트일:</strong>{" "}
-                        {new Date(result.updatedAt).toLocaleString()}
-                    </p>
-                </div>
-            </div>
+            <ReportView result={result} />
         </SidebarInset>
     );
 }
