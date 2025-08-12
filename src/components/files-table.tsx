@@ -18,7 +18,7 @@ import {Input} from "@/components/ui/input"
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table"
 import StatusBubble from "@/components/common/status-bubble";
 import type {File} from "@/types/file"
-import {AnalyzeButton} from "@/components/common/analyze-button";
+import {AnalyzeButton} from "@/components/analyze/analyze-button";
 
 export const columns: ColumnDef<File>[] = [
     {
