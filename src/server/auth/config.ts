@@ -1,4 +1,4 @@
-import { type DefaultSession, type NextAuthConfig } from "next-auth";
+import {type DefaultSession, type NextAuthConfig} from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import CognitoProvider from "next-auth/providers/cognito";
 
@@ -9,22 +9,22 @@ import CognitoProvider from "next-auth/providers/cognito";
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-  }
+    interface Session extends DefaultSession {
+        user: {
+            id: string;
+            // ...other properties
+            // role: UserRole;
+        } & DefaultSession["user"];
+    }
 
-  interface JWT {
-    id: string;
-  }
+    interface JWT {
+        id: string;
+    }
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
+    // interface User {
+    //   // ...other properties
+    //   // role: UserRole;
+    // }
 }
 
 /**
@@ -33,42 +33,42 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authConfig = {
-  providers: [
-    DiscordProvider,
-      CognitoProvider({
-          clientId: process.env.AUTH_COGNITO_CLIENT_ID,
-          clientSecret: process.env.AUTH_COGNITO_CLIENT_SECRET,
-          issuer: process.env.AUTH_COGNITO_ISSUER,
-          authorization: {
-              params: {
-                  scope: "openid email profile",
-              },
-          },
-      })
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
-  ],
-  callbacks: {
-    async jwt({ token, user, account, profile }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
+    providers: [
+        DiscordProvider,
+        CognitoProvider({
+            clientId: process.env.AUTH_COGNITO_CLIENT_ID,
+            clientSecret: process.env.AUTH_COGNITO_CLIENT_SECRET,
+            issuer: process.env.AUTH_COGNITO_ISSUER,
+            authorization: {
+                params: {
+                    scope: "openid email profile",
+                },
+            },
+        })
+        /**
+         * ...add more providers here.
+         *
+         * Most other providers require a bit more work than the Discord provider. For example, the
+         * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
+         * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
+         *
+         * @see https://next-auth.js.org/providers/github
+         */
+    ],
+    callbacks: {
+        async jwt({token, user, account, profile}) {
+            if (user) {
+                token.id = user.id;
+            }
+            return token;
+        },
 
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-    }),
-  },
+        session: ({session, token}) => ({
+            ...session,
+            user: {
+                ...session.user,
+                id: token.sub,
+            },
+        }),
+    },
 } satisfies NextAuthConfig;
