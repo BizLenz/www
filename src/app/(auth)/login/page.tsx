@@ -9,7 +9,7 @@ export default function LoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const error = searchParams.get("error");
-    const callbackUrl = searchParams.get("callbackUrl") || "/";
+    const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
     useEffect(() => {
         if (error) {
@@ -28,7 +28,13 @@ export default function LoginPage() {
 
         if (!session && !error) {
             console.log("No session found, initiating sign-in to Cognito...");
-            signIn("cognito", { callbackUrl: callbackUrl });
+            if (!session && !error) {
+                console.log("No session found, initiating sign-in to Cognito...");
+                signIn("cognito", { callbackUrl: callbackUrl })
+                    .catch((err) => {
+                        console.error("Error during sign in:", err);
+                    });
+            }
         }
     }, [session, status, error, router, callbackUrl]);
 
