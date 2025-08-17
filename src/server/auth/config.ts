@@ -1,5 +1,6 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
+import CognitoProvider from "next-auth/providers/cognito";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -34,6 +35,16 @@ declare module "next-auth" {
 export const authConfig = {
   providers: [
     DiscordProvider,
+      CognitoProvider({
+          clientId: process.env.AUTH_COGNITO_CLIENT_ID,
+          clientSecret: process.env.AUTH_COGNITO_CLIENT_SECRET,
+          issuer: process.env.AUTH_COGNITO_ISSUER,
+          authorization: {
+              params: {
+                  scope: "openid email profile",
+              },
+          },
+      })
     /**
      * ...add more providers here.
      *
