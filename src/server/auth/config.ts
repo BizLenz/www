@@ -1,5 +1,4 @@
 import {type DefaultSession, type NextAuthConfig} from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
 import CognitoProvider from "next-auth/providers/cognito";
 
 /**
@@ -12,6 +11,7 @@ declare module "next-auth" {
     interface Session extends DefaultSession {
         user: {
             id: string;
+            avatar: string | null;
             // ...other properties
             // role: UserRole;
         } & DefaultSession["user"];
@@ -55,7 +55,10 @@ export const authConfig = {
     callbacks: {
         async jwt({token, user, account, profile}) {
             if (user) {
-                token.id = user.id;
+                token.sub = user.id;
+                token.name = user.name;
+                token.email = user.email;
+                token.picture = user.image;
             }
             return token;
         },
@@ -65,6 +68,9 @@ export const authConfig = {
             user: {
                 ...session.user,
                 id: token.sub,
+                name: token.name,
+                email: token.email,
+                avatar: token.picture,
             },
         }),
     },
