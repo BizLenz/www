@@ -15,10 +15,15 @@ declare module "next-auth" {
             // ...other properties
             // role: UserRole;
         } & DefaultSession["user"];
+        accessToken?: string;
+        idToken?: string;
     }
 
     interface JWT {
         id: string;
+        accessToken?: string;
+        idToken?: string;
+        refreshToken?: string;
     }
 
     // interface User {
@@ -54,6 +59,12 @@ export const authConfig = {
     ],
     callbacks: {
         async jwt({token, user, account, profile}) {
+            if (account) {
+                token.accessToken = account.access_token;
+                token.idToken = account.id_token;
+                token.refreshToken = account.refresh_token;
+            }
+
             if (user) {
                 token.sub = user.id;
                 token.name = user.name;
@@ -72,6 +83,8 @@ export const authConfig = {
                 email: token.email,
                 avatar: token.picture,
             },
+            accessToken: token.accessToken,
+            idToken: token.idToken,
         }),
     },
 } satisfies NextAuthConfig;
