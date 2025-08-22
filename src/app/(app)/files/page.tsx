@@ -6,6 +6,30 @@ import {SidebarInset} from "@/components/ui/sidebar";
 import {FilesTable} from "@/components/files-table";
 import {Toaster} from "sonner";
 import {useFileStoreShallow} from "@/store/file-store";
+import { fetchPlansByUser } from "@/hooks/plans";
+
+export async function FilesPage() {
+  // 실제로는 세션에서 userId 읽어옴
+  const userId = 1;
+  const plans = await fetchPlansByUser(userId);
+
+  return (
+    <main className="p-6">
+      <h1 className="text-xl font-semibold mb-4">Uploaded Business Plans</h1>
+      <ul className="space-y-3">
+        {plans.map(p => (
+          <li key={p.id} className="rounded-xl p-4 border">
+            <div className="font-medium">{p.file_name}</div>
+            <div className="text-sm text-muted-foreground">{p.file_path}</div>
+            <div className="text-sm">
+              Latest Job: {p.latest_job_id ?? '—'}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
+}
 
 export default function Files() {
     const [storageUsage, setStorageUsage] = useState<number>();
