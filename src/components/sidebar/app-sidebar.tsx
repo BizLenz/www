@@ -43,34 +43,29 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                 setIsLoadingUserData(true);
                 setUserError(null);
 
+                if (!session?.user?.name) {
+                    throw new Error("User name is missing");
+                }
+                if (!session?.user?.email) {
+                    throw new Error("User email is missing");
+                }
+
                 try {
-                    // --- BEGIN MOCK USER DATA SIMULATION ---
-                    // TODO: Replace with actual FastAPI user data fetch later
-                    console.log("DashboardComponent: Simulating user data fetch with token:", fastApiToken);
-                    const dummyUserData: UserData = {
-                        name: session?.user?.name ?? "Lorem Ipsum",
-                        email: session?.user?.email ?? "lorem@ipsum.com",
+                    console.log("DashboardComponent: Fetching user data");
+                    const userData: UserData = {
+                        name: session?.user?.name,
+                        email: session?.user?.email,
                         avatar: session?.user?.image ?? "",
                     };
 
                     await new Promise((resolve) => setTimeout(resolve, 800));
-                    setUserData(dummyUserData);
-                    // --- END MOCK USER DATA SIMULATION ---
-
-                    /*
-                    // const res = await fetch("http://your-fastapi-url/api/user-profile", {
-                    //   headers: { Authorization: `Bearer ${fastApiToken}` },
-                    // });
-                    // if (!res.ok) throw new Error("Failed to fetch user data");
-                    // const realData = await res.json();
-                    // setUserData(realData);
-                    */
-
+                    setUserData(userData);
                 } catch (err: unknown) {
                     const errorMessage = getErrorMessage(err);
                     setUserError(errorMessage);
                     setUserData(null);
-                    if (isError(err)) console.error("Error loading user data:", err.message); else console.error("Caught unexpected error loading user data:", err);
+                    if (isError(err)) console.error("Error loading user data:", err.message);
+                    else console.error("Caught unexpected error loading user data:", err);
                 } finally {
                     setIsLoadingUserData(false);
                 }
