@@ -1,25 +1,27 @@
 // !! THIS IS A MOCK !!
 import { auth } from "@/server/auth";
 import { NextResponse } from "next/server";
+
 // import jwt from "jsonwebtoken";
 
 export async function GET(request: Request) {
-    const session = await auth();
+  const session = await auth();
 
-    if (!session || !session.user || !session.user.id) {
-        return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
-    }
+  if (!session || !session.user || !session.user.id) {
+    return NextResponse.json({ message: "Not authenticated" }, { status: 401 });
+  }
 
-    // !! MOCK CODE !!
-    const mockFastApiToken = `MOCK_TOKEN_FOR_USER_${session.user.id}_${Date.now()}`;
+  // !! MOCK CODE !!
+  const mockFastApiToken = `MOCK_TOKEN_FOR_USER_${session.user.id}_${Date.now()}`;
 
-    return NextResponse.json({
-        token: mockFastApiToken,
-        message: "This is a mock token for frontend development. Real JWT not generated yet."
-    });
-    // !! END OF MOCK CODE !!
+  return NextResponse.json({
+    token: mockFastApiToken,
+    message:
+      "This is a mock token for frontend development. Real JWT not generated yet.",
+  });
+  // !! END OF MOCK CODE !!
 
-    /*
+  /*
     const FASTAPI_JWT_SECRET = process.env.FASTAPI_JWT_SECRET;
     const TOKEN_EXPIRATION_SECONDS = 60 * 60;
 

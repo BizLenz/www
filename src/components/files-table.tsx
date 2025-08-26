@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/table";
 import StatusBubble from "@/components/common/status-bubble";
 import type { File } from "@/types/file";
-import { AnalyzeButton } from "@/components/analyze/analyze-button";
+import { AnalysisButton } from "@/components/analysis/analysis-button";
 import { useRouter } from "next/navigation";
 
 export function FilesTable({ data }: { data: File[] }) {
@@ -106,7 +106,7 @@ export function FilesTable({ data }: { data: File[] }) {
                 결과확인
               </Button>
             ) : (
-              <AnalyzeButton fileId={file.id} fileName={file.fileName} />
+              <AnalysisButton fileId={file.id} fileName={file.fileName} />
             )}
           </div>
         );
