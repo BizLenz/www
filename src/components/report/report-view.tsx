@@ -14,9 +14,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Lightbulb, ThumbsDown, ThumbsUp } from "lucide-react";
 
-// --- MOCK DATA TYPE (based on your old code) ---
-// You would use your actual `AnalysisResult` type here.
-// This is just for the example to work.
+// --- MOCK DATA TYPE ---
 type MockAnalysisResult = {
   title: string;
   total_score: number;
@@ -35,8 +33,6 @@ type MockAnalysisResult = {
   }>;
 };
 
-// This is the main component, refactored from your original ReportView.
-// It now acts as a "container" that prepares data and arranges the new, smaller components.
 export default function ReportView({ result }: { result: MockAnalysisResult }) {
   const {
     title,
@@ -53,7 +49,6 @@ export default function ReportView({ result }: { result: MockAnalysisResult }) {
   return (
     <div className="bg-background text-foreground min-h-screen p-4 font-sans sm:p-6 md:p-8">
       <div className="mx-auto max-w-5xl space-y-8">
-        {/* 1. New Header Section */}
         <header className="space-y-4">
           <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
             {title}
@@ -92,10 +87,8 @@ export default function ReportView({ result }: { result: MockAnalysisResult }) {
         </header>
 
         <main className="space-y-8">
-          {/* 2. Using the new, enhanced ScoreChart component */}
           <ScoreChart data={evaluation_criteria} />
 
-          {/* 3. Using the new FeedbackCard in a 3-column grid */}
           <div className="grid gap-6 md:grid-cols-3">
             <FeedbackCard
               title="강점 (Strengths)"
@@ -117,7 +110,6 @@ export default function ReportView({ result }: { result: MockAnalysisResult }) {
             />
           </div>
 
-          {/* 4. Using the new EvaluationCriteriaCard for a richer detailed view */}
           <div>
             <h2 className="mb-4 text-2xl font-bold">세부 평가 결과</h2>
             <div className="space-y-4">
@@ -134,7 +126,3 @@ export default function ReportView({ result }: { result: MockAnalysisResult }) {
     </div>
   );
 }
-
-// NOTE: You would also need to include the definitions for ScoreChart, FeedbackCard,
-// EvaluationCriteriaCard, CustomProgressBar, Card, Badge, etc., from my previous response.
-// Also, remember to import `cn` from "@/lib/utils" and the icons from `lucide-react`.

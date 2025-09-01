@@ -15,7 +15,6 @@ import {
 import { ThumbsUp, ThumbsDown, Lightbulb } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Import UI components from your project structure
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -34,7 +33,6 @@ import {
 } from "@/components/ui/table";
 
 // --- TYPE DEFINITIONS ---
-// Defining the shape of the data our components expect
 type EvaluationCriterion = {
   category: string;
   score: number;
@@ -63,31 +61,28 @@ export const ScoreChart = ({ data }: { data: EvaluationCriterion[] }) => (
             <XAxis dataKey="category" tick={{ fontSize: 12 }} />
             <YAxis tick={{ fontSize: 12 }} />
             <Tooltip
-              // Using direct, contrasting colors for the tooltip for immediate readability
               contentStyle={{
-                backgroundColor: "#FFFFFF", // White background
-                borderColor: "#E0E0E0", // Light grey border
-                color: "#333333", // Dark grey text for content
+                backgroundColor: "#FFFFFF", // White
+                borderColor: "#E0E0E0", // Light grey
+                color: "#333333", // Dark grey
               }}
               labelStyle={{
-                color: "#333333", // Dark grey text for label
+                color: "#333333", // Dark grey text
               }}
               itemStyle={{
-                color: "#333333", // Dark grey text for individual items
+                color: "#333333", // Dark grey text
               }}
             />
             <Legend wrapperStyle={{ fontSize: "14px" }} />
             <Bar
               dataKey="score"
-              // Custom color for '획득 점수' (Acquired Score) - a distinct blue
-              fill="#8884d8" // A pleasant, commonly used chart blue/purple
+              fill="#8884d8" // blue/purple
               name="획득 점수"
               radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="max_score"
-              // Custom color for '만점' (Max Score) - a lighter grey for contrast
-              fill="#BBBBBB" // A light grey
+              fill="#BBBBBB" // light grey
               name="만점"
               radius={[4, 4, 0, 0]}
             />
@@ -95,7 +90,7 @@ export const ScoreChart = ({ data }: { data: EvaluationCriterion[] }) => (
               <ReferenceLine
                 key={`ref-${index}`}
                 y={entry.min_score_required}
-                stroke="hsl(var(--destructive))" // Keeping this as it refers to a specific UI state (destructive)
+                stroke="hsl(var(--destructive))"
                 strokeDasharray="3 3"
                 ifOverflow="extendDomain"
               />
