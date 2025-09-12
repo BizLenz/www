@@ -1,8 +1,6 @@
-"use client";
+// TODO: fetch from backend after DB gets fixed
 
-// Assume all the new components (ScoreChart, FeedbackCard, etc.) from my
-// previous answer are defined in this file or imported.
-// import { ScoreChart, FeedbackCard, EvaluationCriteriaCard } from './report-components';
+"use client";
 
 import { type AnalysisResult } from "@/types/analysis-result";
 import {

@@ -26,15 +26,15 @@ export function DashboardRecentView({ recentFiles }: { recentFiles: File[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {/* TODO: fetch from backend */}
           {recentFiles.length > 0 ? (
             recentFiles.map((file) => (
-              <TableRow key={file.id}>
+                // TODO: change to file.id after DB gets fixed
+                <TableRow key={file.file_name}>
                 <TableCell className="font-medium">기본분석</TableCell>
                 <TableCell>
                   <StatusBubble status={file.status} />
                 </TableCell>
-                <TableCell className="text-right">{file.fileName}</TableCell>
+                <TableCell className="text-right">{file.file_name}</TableCell>
               </TableRow>
             ))
           ) : (

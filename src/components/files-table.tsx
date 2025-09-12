@@ -99,14 +99,19 @@ export function FilesTable({ data }: { data: File[] }) {
                 variant="secondary"
                 size="sm"
                 onClick={() => {
-                  toast.info(`'${file.fileName}'의 결과 페이지로 이동합니다.`);
-                  router.push(`/results/${file.id}`);
+                  toast.info(`'${file.file_name}'의 결과 페이지로 이동합니다.`);
+                  // TODO: change to file.id after DB gets fixed
+                  router.push(`/results/${file.file_name}`);
                 }}
               >
                 결과확인
               </Button>
             ) : (
-              <AnalysisButton fileId={file.id} fileName={file.fileName} />
+              // TODO: change to file.id after DB gets fixed
+              <AnalysisButton
+                fileId={file.file_name}
+                fileName={file.file_name}
+              />
             )}
           </div>
         );

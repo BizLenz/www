@@ -1,5 +1,6 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import CognitoProvider from "next-auth/providers/cognito";
+import { decode } from "next-auth/jwt";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -45,7 +46,7 @@ export const authConfig = {
       issuer: process.env.AUTH_COGNITO_ISSUER,
       authorization: {
         params: {
-          scope: "openid email profile",
+          scope: "openid email profile bizlenz/read bizlenz/write",
         },
       },
     }),
@@ -71,6 +72,7 @@ export const authConfig = {
         token.email = user.email;
         token.picture = user.image;
       }
+
       return token;
     },
 

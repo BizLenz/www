@@ -1,3 +1,5 @@
+// TODO: add fallback UI if status does not exist
+
 import { CircleCheck, Clock, LoaderCircle } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
@@ -5,10 +7,10 @@ import { Badge } from "@/components/ui/badge";
 type FileStatus = "완료" | "분석중" | "대기중";
 
 interface StatusProps {
-  status: FileStatus;
+  status?: FileStatus;
 }
 
-function renderStatus(status: FileStatus) {
+function renderStatus(status?: FileStatus) {
   switch (status) {
     case "완료":
       return (

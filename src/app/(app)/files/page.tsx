@@ -6,16 +6,20 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { FilesTable } from "@/components/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
+import { useSession } from "next-auth/react";
 
 export default function Files() {
+  const { data: session, status } = useSession();
   const [storageUsage, setStorageUsage] = useState<number>();
 
   const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
 
-  // TODO: fetch from backend
   useEffect(() => {
+    // TODO: remove dummy after implementation
     setStorageUsage(800.5);
-    void fetchFiles();
+    if (files.length === 0 && !isLoading && session) {
+      void fetchFiles(session);
+    }
   }, [fetchFiles]);
 
   return (

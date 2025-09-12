@@ -15,20 +15,23 @@ import Notification from "@/components/notification";
 import { DashboardFileForm } from "@/components/dashboard/dashboard-file-form";
 import { DashboardRecentView } from "@/components/dashboard/dashboard-recent-view";
 import { useFileStoreShallow } from "@/store/file-store";
+import { useSession } from "next-auth/react";
 
 export default function Page() {
+  const { data: session, status } = useSession();
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
   // Data for the table
   const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
 
-  // TODO: fetch from backend
   useEffect(() => {
+    // TODO: add team fetches
     setTeamName("test");
+    // TODO: remove dummy data after implementation
     setStorageUsage(800.5);
-    if (files.length === 0 && !isLoading) {
-      void fetchFiles();
+    if (files.length === 0 && !isLoading && session) {
+      void fetchFiles(session);
     }
   }, [files.length, isLoading, fetchFiles]);
 
