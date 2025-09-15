@@ -28,8 +28,8 @@ export function DashboardRecentView({ recentFiles }: { recentFiles: File[] }) {
         <TableBody>
           {recentFiles.length > 0 ? (
             recentFiles.map((file) => (
-                // TODO: change to file.id after DB gets fixed
-                <TableRow key={file.file_name}>
+              // TODO: change to file.id after DB gets fixed
+              <TableRow key={file.file_name}>
                 <TableCell className="font-medium">기본분석</TableCell>
                 <TableCell>
                   <StatusBubble status={file.status} />

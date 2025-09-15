@@ -3,10 +3,11 @@
 import { Progress } from "@/components/ui/progress";
 import { useEffect, useState } from "react";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { FilesTable } from "@/components/files-table";
+import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
 import { useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 export default function Files() {
   const { data: session, status } = useSession();

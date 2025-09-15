@@ -1,7 +1,7 @@
 import z from "zod";
 
 export const fileSchema = z.object({
-    // TODO: add id after DB gets fixed
+  // TODO: add id after DB gets fixed
   // id: z.string(),
   file_name: z.string(),
   last_modified: z.string(),

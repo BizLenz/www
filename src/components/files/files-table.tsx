@@ -29,8 +29,11 @@ import StatusBubble from "@/components/common/status-bubble";
 import type { File } from "@/types/file";
 import { AnalysisButton } from "@/components/analysis/analysis-button";
 import { useRouter } from "next/navigation";
+import { FilesUploadButton } from "@/components/files/files-upload-button";
+import { useSession } from "next-auth/react";
 
 export function FilesTable({ data }: { data: File[] }) {
+  const { data: session, status } = useSession();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -148,13 +151,14 @@ export function FilesTable({ data }: { data: File[] }) {
 
   return (
     <div className="w-full space-y-4">
-      <div className="flex items-center">
+      <div className="flex items-center justify-between">
         <Input
           placeholder="파일 이름으로 검색..."
           value={globalFilter ?? ""}
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
+        <FilesUploadButton fileId="" fileName="" session={session} />
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed">
