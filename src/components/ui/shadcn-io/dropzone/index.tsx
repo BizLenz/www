@@ -37,8 +37,8 @@ export type DropzoneProps = Omit<DropzoneOptions, "onDrop"> & {
   src?: File[];
   className?: string;
   onDrop?: (
-    acceptedFiles: File,
-    fileRejections: FileRejection,
+    acceptedFiles: File[],
+    fileRejections: FileRejection[],
     event: DropEvent,
   ) => void;
   children?: ReactNode;

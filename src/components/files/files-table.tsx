@@ -70,14 +70,14 @@ export function FilesTable({ data }: { data: File[] }) {
       size: 40,
     },
     {
-      accessorKey: "fileName",
+      accessorKey: "file_name",
       header: "파일 이름",
       cell: ({ row }) => (
-        <div className="font-medium">{row.getValue("fileName")}</div>
+        <div className="font-medium">{row.getValue("file_name")}</div>
       ),
     },
     {
-      accessorKey: "uploadDate",
+      accessorKey: "last_modified",
       header: "업로드 날짜",
     },
     {
@@ -158,7 +158,7 @@ export function FilesTable({ data }: { data: File[] }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
-        <FilesUploadButton fileId="" fileName="" session={session} />
+        <FilesUploadButton session={session} />
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed">

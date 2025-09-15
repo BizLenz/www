@@ -2,6 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { router } from "next/client";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/ui/shadcn-io/dropzone";
+import { useState } from "react";
+import { useFileUpload } from "@/hooks/use-file-upload";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   category: z.string({
@@ -37,13 +46,39 @@ export function DashboardFileForm({}) {
     },
   });
 
-  // TODO: make call to backend
+  const [files, setFiles] = useState<File[]>([]);
+  const { uploadFile, loading, error, reset } = useFileUpload({
+    description: "User uploaded document",
+  });
+  const router = useRouter();
+
+  const handleDrop = (files: File[]) => {
+    console.log("Accepted files:", files);
+    setFiles(files);
+  };
+
   async function onSubmit(data: z.infer<typeof formSchema>) {
     console.log("Form submitted with data:", data);
     try {
-      await router.push("/files");
+      if (files.length === 0) {
+        toast.error("No file selected.");
+        return;
+      }
+      const file = files[0];
+      if (!file) {
+        toast.error("No file selected.");
+        return;
+      }
+      const result = await uploadFile(file);
+      if (result) {
+        console.log("File uploaded successfully:", result);
+        toast.success("File uploaded successfully.");
+        setFiles([]);
+        // TODO: make analysis call to backend
+        router.push(`/files`);
+      }
     } catch (error) {
-      console.error("Navigation failed:", error);
+      console.error("File upload failed:", error);
     }
   }
 
@@ -90,26 +125,15 @@ export function DashboardFileForm({}) {
               </FormItem>
             )}
           />
-
-          {/* Row with File DND (Placeholder) */}
-          <FormField
-            control={form.control}
-            name="files"
-            render={() => (
-              <FormItem>
-                <div className="flex flex-col gap-4">
-                  <FormLabel>파일 선택</FormLabel>
-                  <FormControl>
-                    {/* TODO: Make actual dnd logics */}
-                    <div className="flex h-32 w-full items-center justify-center rounded-md border border-dashed text-sm">
-                      클릭하거나, 파일을 드래그 앤 드랍해주세요.
-                    </div>
-                  </FormControl>
-                  <FormMessage />
-                </div>
-              </FormItem>
-            )}
-          />
+          <Dropzone
+            accept={{ "application/pdf": [] }}
+            onDrop={handleDrop}
+            onError={console.error}
+            src={files}
+          >
+            <DropzoneEmptyState />
+            <DropzoneContent />
+          </Dropzone>
 
           {/* Button */}
           <div className="flex justify-end">

@@ -22,7 +22,6 @@ export default function Page() {
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  // Data for the table
   const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
 
   useEffect(() => {
