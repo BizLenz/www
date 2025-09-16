@@ -47,10 +47,11 @@ export const useFileStore = create<FileState>()((set, get) => ({
         );
       }
 
-      const data = await response.json();
+      const data: unknown = await response.json();
       console.log(data);
 
-      const validatedFiles = z.array(fileSchema).parse(data);
+      const filesArraySchema = z.array(fileSchema);
+      const validatedFiles = filesArraySchema.parse(data);
       set({ files: validatedFiles, isLoading: false });
     } catch (err: unknown) {
       if (err instanceof Error) {
