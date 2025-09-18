@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import {getErrorMessage} from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils";
 
 interface FileUploadOptions {
   description?: string;
@@ -21,18 +21,18 @@ interface UseFileUpload {
 }
 
 interface PresignedUrlResponse {
-    upload_url: string;
-    file_url: string;
-    key: string;
+  upload_url: string;
+  file_url: string;
+  key: string;
 }
 
 interface MetadataSaveResponse {
-    message: string;
-    file_id: string;
+  message: string;
+  file_id: string;
 }
 
 interface FileUploadErrorResponse {
-    detail: string;
+  detail: string;
 }
 
 export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
@@ -94,7 +94,8 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         );
 
         if (!presignedUrlResponse.ok) {
-          const errorData = await presignedUrlResponse.json() as FileUploadErrorResponse;
+          const errorData =
+            (await presignedUrlResponse.json()) as FileUploadErrorResponse;
           console.error("Backend Error Details:", errorData);
           const errorMessage =
             errorData.detail ??
@@ -102,7 +103,8 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
           throw new Error(errorMessage);
         }
 
-        const { upload_url, file_url, key } = await presignedUrlResponse.json() as PresignedUrlResponse;
+        const { upload_url, file_url, key } =
+          (await presignedUrlResponse.json()) as PresignedUrlResponse;
         console.log("Presigned URL received. Uploading to S3...");
 
         // Upload the file directly to S3
@@ -147,14 +149,16 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         );
 
         if (!metadataSaveResponse.ok) {
-          const errorData = await metadataSaveResponse.json() as FileUploadErrorResponse;
+          const errorData =
+            (await metadataSaveResponse.json()) as FileUploadErrorResponse;
           const errorMessage =
             errorData.detail ??
             `Failed to save file metadata: ${metadataSaveResponse.status}`;
           throw new Error(errorMessage);
         }
 
-        const metadataResult = await metadataSaveResponse.json() as MetadataSaveResponse;
+        const metadataResult =
+          (await metadataSaveResponse.json()) as MetadataSaveResponse;
         toast.success(`Upload successful! File ID: ${metadataResult.file_id}.`);
         return {
           fileId: metadataResult.file_id,

@@ -23,9 +23,7 @@ interface FilesUploadButtonProps {
   session: Session | null;
 }
 
-export function FilesUploadButton({
-  session,
-}: FilesUploadButtonProps) {
+export function FilesUploadButton({ session }: FilesUploadButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | undefined>();
