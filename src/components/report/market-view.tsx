@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import type { MarketAnalysis } from "@/types/market";
+import type { MarketAnalysis } from "@/types/analysis-detail-result";
 import {
   Card,
   CardContent,

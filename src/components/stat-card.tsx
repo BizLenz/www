@@ -6,7 +6,7 @@ interface StatCardProps {
   count: number;
 }
 
-// Dashboard (total analysis count, analysis in progress, uploaded files)
+// Dashboard (total analysis-result count, analysis-result in progress, uploaded files)
 export default function StatCard({ icon, title, count }: StatCardProps) {
   return (
     <div className="flex flex-1 flex-row items-center justify-between gap-4 rounded-xl border-1 p-5">

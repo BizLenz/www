@@ -5,7 +5,10 @@ import {
 } from "@/types/analysis-result";
 
 import MarketAnalysisView from "@/components/report/market-view";
-import { MarketAnalysisSchema, type MarketAnalysis } from "@/types/market";
+import {
+  MarketAnalysisSchema,
+  type MarketAnalysis,
+} from "@/types/analysis-detail-result";
 
 // TODO: fetch result from server
 async function getResult(id: string): Promise<AnalysisResult> {
