@@ -93,7 +93,7 @@ export function FilesTable({ data }: { data: File[] }) {
       header: () => null,
       cell: ({ row }) => {
         const file = row.original;
-        const isCompleted = file.status === "완료";
+        const isCompleted = file.status === "completed";
 
         return (
           <div className="text-right">
@@ -103,16 +103,14 @@ export function FilesTable({ data }: { data: File[] }) {
                 size="sm"
                 onClick={() => {
                   toast.info(`'${file.file_name}'의 결과 페이지로 이동합니다.`);
-                  // TODO: change to file.id after DB gets fixed
-                  router.push(`/results/${file.file_name}`);
+                  router.push(`/results/${file.id}`);
                 }}
               >
                 결과확인
               </Button>
             ) : (
-              // TODO: change to file.id after DB gets fixed
               <AnalysisButton
-                fileId={file.file_name}
+                fileId={file.id}
                 fileName={file.file_name}
               />
             )}

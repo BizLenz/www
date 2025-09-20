@@ -1,5 +1,4 @@
 // TODO: calculate storage usage & export
-// TODO: add status fetches after DB gets fixed
 
 import { create } from "zustand";
 import { type File, fileSchema } from "@/types/file";
@@ -13,6 +12,11 @@ export interface FileState {
   isLoading: boolean;
   error: string | null;
   fetchFiles: (session: Session) => Promise<void>;
+}
+
+export interface FileResponse {
+  success: boolean;
+  results: File[];
 }
 
 export const useFileStore = create<FileState>()((set, get) => ({
@@ -50,8 +54,10 @@ export const useFileStore = create<FileState>()((set, get) => ({
       const data: unknown = await response.json();
       console.log(data);
 
+      const { success, results } = data as FileResponse;
+      if (!success) throw new Error("Failed to fetch files");
       const filesArraySchema = z.array(fileSchema);
-      const validatedFiles = filesArraySchema.parse(data);
+      const validatedFiles = filesArraySchema.parse(results);
       set({ files: validatedFiles, isLoading: false });
     } catch (err: unknown) {
       if (err instanceof Error) {

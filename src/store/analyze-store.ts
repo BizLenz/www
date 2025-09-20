@@ -7,9 +7,9 @@ export interface FileSettings {
 
 interface AnalyzeState {
   files: Record<string, FileSettings>;
-  setFileSettings: (fileId: string, settings: Partial<FileSettings>) => void;
-  getFileSettings: (fileId: string) => FileSettings;
-  resetFile: (fileId: string) => void;
+  setFileSettings: (fileId: number, settings: Partial<FileSettings>) => void;
+  getFileSettings: (fileId: number) => FileSettings;
+  resetFile: (fileId: number) => void;
 }
 
 export const useAnalyzeStore = create<AnalyzeState>((set, get) => ({

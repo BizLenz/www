@@ -16,9 +16,9 @@ import { Step1Settings } from "./steps/step-1-settings";
 import { Step2Review } from "./steps/step-2-review";
 
 interface AnalysisButtonProps {
-  fileId: string;
+  fileId: number;
   fileName: string;
-  onConfirm?: (fileId: string) => Promise<void> | void;
+  onConfirm?: (fileId: number) => Promise<void> | void;
 }
 
 export function AnalysisButton({

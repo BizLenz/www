@@ -1,7 +1,7 @@
 import { type FileSettings, useAnalyzeStore } from "@/store/analyze-store";
 
 interface Step2ReviewProps {
-  fileId: string;
+  fileId: number;
 }
 
 const EMPTY_SETTINGS: FileSettings = {};

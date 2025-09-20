@@ -1,10 +1,10 @@
 // TODO: add fallback UI if status does not exist
 
-import { CircleCheck, Clock, LoaderCircle } from "lucide-react";
+import { CircleCheck, Clock, LoaderCircle, X } from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 
-type FileStatus = "완료" | "분석중" | "대기중";
+type FileStatus = "pending" | "processing" | "completed" | "failed";
 
 interface StatusProps {
   status?: FileStatus;
@@ -12,27 +12,34 @@ interface StatusProps {
 
 function renderStatus(status?: FileStatus) {
   switch (status) {
-    case "완료":
+    case "completed":
       return (
         <div className="flex items-center gap-2">
           <CircleCheck className="size-4 text-green-500" />
-          <span>{status}</span>
+          <span>완료</span>
         </div>
       );
-    case "분석중":
+    case "processing":
       return (
         <div className="flex items-center gap-2">
           <LoaderCircle className="size-4 animate-spin text-blue-500" />
-          <span>{status}</span>
+          <span>분석중</span>
         </div>
       );
-    case "대기중":
+    case "pending":
       return (
         <div className="flex items-center gap-2">
           <Clock className="text-muted-foreground size-4" />
-          <span>{status}</span>
+          <span>대기중</span>
         </div>
       );
+      case "failed":
+          return (
+              <div className="flex items-center gap-2">
+                  <X className="size-4 animate-spin text-blue-500" />
+                  <span>실패</span>
+              </div>
+          )
     default:
       return <span>{status}</span>;
   }

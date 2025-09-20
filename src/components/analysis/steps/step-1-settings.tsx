@@ -5,7 +5,7 @@ import { ProgramComboBox } from "@/components/analysis/program-combo-box";
 import { useCallback } from "react";
 
 interface Step1SettingsProps {
-  fileId: string;
+  fileId: number;
 }
 
 const EMPTY_SETTINGS: FileSettings = {};

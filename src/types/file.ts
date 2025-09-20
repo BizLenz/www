@@ -1,12 +1,11 @@
 import z from "zod";
 
 export const fileSchema = z.object({
-  // TODO: add id after DB gets fixed
-  // id: z.string(),
+  id: z.number(),
   file_name: z.string(),
-  last_modified: z.string(),
-  size: z.number(),
-  status: z.enum(["대기중", "분석중", "완료"]).optional(),
+  last_modified: z.string().optional(),
+  size: z.number().optional(),
+  status: z.enum(["pending", "processing", "completed", "failed"]).optional(),
 });
 
 export type File = z.infer<typeof fileSchema>;
