@@ -4,10 +4,10 @@ import {
   type AnalysisResult,
 } from "@/types/analysis-result";
 
-import FinancialAnalysisView from "@/components/report/financial-view"; // Import the new component
+import TechnicalAnalysisView from "@/components/report/technical-view";
 import {
-  FinancialAnalysisSchema,
-  type FinancialAnalysis,
+  TechnicalAnalysisSchema,
+  type TechnicalAnalysis,
 } from "@/types/analysis-detail-result";
 
 async function getResult(id: string): Promise<AnalysisResult> {
@@ -77,47 +77,39 @@ async function getResult(id: string): Promise<AnalysisResult> {
   return AnalysisResultSchema.parse(dummyData);
 }
 
-const financialAnalysisData = {
-  title: "재무 분석",
-  revenue_projections: [
-    {
-      year: 1,
-      revenue: "1억원",
-      assumptions: "신규 고객 유치 및 서비스 안정화",
-    },
-    {
-      year: 2,
-      revenue: "3억원",
-      assumptions: "시장 점유율 확대 및 기능 개선",
-    },
-    {
-      year: 3,
-      revenue: "7억원",
-      assumptions: "글로벌 시장 진출 및 신규 서비스 출시",
-    },
-  ],
-  cost_analysis: {
-    initial_investment: "5천만원",
-    monthly_fixed_cost: "1천만원",
-    variable_cost_per_use: "100원",
+// Dummy data for Technical Analysis
+const technicalAnalysisData = {
+  title: "기술 분석",
+  technology_stack_assessment: {
+    frontend: "React, Next.js, TypeScript, Tailwind CSS",
+    backend: "Node.js (Express), NestJS, PostgreSQL",
+    infra: "AWS EC2, RDS, S3, CloudFront, Docker, Kubernetes",
+    evaluation:
+      "최신 웹 기술 스택을 활용하여 개발 생산성과 유지보수성이 높습니다.\n마이크로서비스 아키텍처를 지향하여 향후 확장성이 뛰어납니다.\n클라우드 네이티브 환경에 최적화되어 있습니다.",
   },
-  break_even_point: "서비스 출시 후 12개월 내 달성 목표",
-  funding_recommendation:
-    "초기 Seed 투자 유치 (1억원) 권고. 추가적으로 정부 지원 사업 활용 검토.",
+  scalability:
+    "수평적 확장이 용이한 MSA (Microservices Architecture) 기반으로 설계되었습니다. AWS의 오토스케일링 그룹 및 Kubernetes를 활용하여 트래픽 증가에 유연하게 대응할 수 있습니다. 데이터베이스 또한 Read Replica 등을 통해 확장성을 확보하고 있습니다.",
+  security_risks: [
+    "Cross-Site Scripting (XSS) 취약점",
+    "SQL Injection 가능성 (백엔드 코드 리뷰 필요)",
+    "민감 데이터 저장 시 암호화 부족",
+    "API 키 노출 위험",
+    "최신 CVE 보안 업데이트 지연",
+  ],
 };
 
-export default async function FinancialAnalysisPage({}: {
+export default async function TechnicalAnalysisPage({}: {
   params: { id: string };
 }) {
-  // const financialResult = await fetchFinancialAnalysis(params.id);
+  // const technicalResult = await fetchTechnicalAnalysis(params.id);
 
   // validate data
-  const parsedFinancialAnalysis: FinancialAnalysis =
-    FinancialAnalysisSchema.parse(financialAnalysisData);
+  const parsedTechnicalAnalysis: TechnicalAnalysis =
+    TechnicalAnalysisSchema.parse(technicalAnalysisData);
 
   return (
     <SidebarInset>
-      <FinancialAnalysisView data={parsedFinancialAnalysis} />
+      <TechnicalAnalysisView data={parsedTechnicalAnalysis} />
     </SidebarInset>
   );
 }
