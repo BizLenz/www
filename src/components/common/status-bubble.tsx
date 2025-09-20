@@ -33,13 +33,13 @@ function renderStatus(status?: FileStatus) {
           <span>대기중</span>
         </div>
       );
-      case "failed":
-          return (
-              <div className="flex items-center gap-2">
-                  <X className="size-4 animate-spin text-blue-500" />
-                  <span>실패</span>
-              </div>
-          )
+    case "failed":
+      return (
+        <div className="flex items-center gap-2">
+          <X className="size-4 animate-spin text-blue-500" />
+          <span>실패</span>
+        </div>
+      );
     default:
       return <span>{status}</span>;
   }

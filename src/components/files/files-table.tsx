@@ -109,10 +109,7 @@ export function FilesTable({ data }: { data: File[] }) {
                 결과확인
               </Button>
             ) : (
-              <AnalysisButton
-                fileId={file.id}
-                fileName={file.file_name}
-              />
+              <AnalysisButton fileId={file.id} fileName={file.file_name} />
             )}
           </div>
         );

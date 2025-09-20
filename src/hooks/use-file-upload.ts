@@ -8,7 +8,7 @@ interface FileUploadOptions {
 }
 
 interface FileUploadResult {
-  fileId: string;
+  fileId: number;
   fileUrl: string;
   s3Key: string;
 }
@@ -21,14 +21,14 @@ interface UseFileUpload {
 }
 
 interface PresignedUrlResponse {
-  upload_url: string;
+  presigned_url: string;
   file_url: string;
   key: string;
 }
 
 interface MetadataSaveResponse {
   message: string;
-  file_id: string;
+  file_id: number;
 }
 
 interface FileUploadErrorResponse {
@@ -103,12 +103,12 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
           throw new Error(errorMessage);
         }
 
-        const { upload_url, file_url, key } =
+        const { presigned_url, file_url, key } =
           (await presignedUrlResponse.json()) as PresignedUrlResponse;
         console.log("Presigned URL received. Uploading to S3...");
 
         // Upload the file directly to S3
-        const s3UploadResponse = await fetch(upload_url, {
+        const s3UploadResponse = await fetch(presigned_url, {
           method: "PUT",
           headers: {
             "Content-Type": file.type,
