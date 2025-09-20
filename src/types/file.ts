@@ -3,7 +3,7 @@ import z from "zod";
 export const fileSchema = z.object({
   id: z.number(),
   file_name: z.string(),
-  last_modified: z.string().optional(),
+  created_at: z.string().optional(),
   size: z.number().optional(),
   status: z.enum(["pending", "processing", "completed", "failed"]).optional(),
 });

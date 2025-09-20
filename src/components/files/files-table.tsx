@@ -77,8 +77,42 @@ export function FilesTable({ data }: { data: File[] }) {
       ),
     },
     {
-      accessorKey: "last_modified",
+      accessorKey: "created_at",
       header: "업로드 날짜",
+      cell: ({ row }) => {
+        const createdAtValue = row.getValue<string | undefined | null>(
+          "created_at",
+        );
+        let formattedDate = "";
+
+        // only proceed if createdAtValue is not null or undefined
+        if (createdAtValue) {
+          try {
+            const date = new Date(createdAtValue);
+
+            if (!isNaN(date.getTime())) {
+              formattedDate = new Intl.DateTimeFormat("ko-KR", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+                hour12: false,
+              }).format(date);
+            } else {
+              formattedDate = "유효하지 않은 날짜";
+            }
+          } catch (error) {
+            console.error("Error formatting date:", error);
+            formattedDate = "날짜 형식 오류";
+          }
+        } else {
+          formattedDate = "날짜 정보 없음";
+        }
+
+        return <div className="font-medium">{formattedDate}</div>;
+      },
     },
     {
       accessorKey: "status",
