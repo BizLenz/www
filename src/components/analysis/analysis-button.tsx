@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { useAnalyzeStore } from "@/store/analyze-store";
 import { Step1Settings } from "./steps/step-1-settings";
 import { Step2Review } from "./steps/step-2-review";
+import { useAnalysis } from "@/hooks/use-analysis-hook";
 
 interface AnalysisButtonProps {
   fileId: number;
@@ -32,6 +33,8 @@ export function AnalysisButton({
 
   const resetFile = useAnalyzeStore((s) => s.resetFile);
 
+  const { analyzeDocument, isLoading, error, resetError } = useAnalysis();
+
   const steps = [
     { title: "분석 옵션 설정", content: <Step1Settings fileId={fileId} /> },
     { title: "최종 확인", content: <Step2Review fileId={fileId} /> },
@@ -42,11 +45,13 @@ export function AnalysisButton({
   const handleOpen = () => {
     setStep(0);
     setOpen(true);
+    resetError();
   };
 
   const handleClose = () => {
     setOpen(false);
     resetFile(fileId);
+    resetError();
   };
 
   const handleConfirm = async () => {
