@@ -1,5 +1,3 @@
-// TODO: calculate storage usage & export
-
 import { create } from "zustand";
 import { type File, fileSchema } from "@/types/file";
 import { z } from "zod";
@@ -84,6 +82,12 @@ export const useFileStoreShallow = () =>
   useFileStore(
     useShallow((state: FileState) => ({
       files: state.files,
+      size: Number(
+        (
+          state.files.reduce((acc, file) => acc + (file.file_size || 0), 0) /
+          1_048_576
+        ).toFixed(2),
+      ), // MiB
       isLoading: state.isLoading,
       error: state.error,
       fetchFiles: state.fetchFiles,

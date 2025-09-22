@@ -13,11 +13,10 @@ export default function Files() {
   const { data: session, status } = useSession();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
+  const { files, size, isLoading, error, fetchFiles } = useFileStoreShallow();
 
   useEffect(() => {
-    // TODO: remove dummy after implementation
-    setStorageUsage(800.5);
+    setStorageUsage(size);
     if (files.length === 0 && !isLoading && session) {
       void fetchFiles(session);
     }

@@ -22,13 +22,13 @@ export default function Page() {
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
+  const { files, size, isLoading, error, fetchFiles } = useFileStoreShallow();
 
   useEffect(() => {
     // TODO: add team fetches
     setTeamName("test");
     // TODO: remove dummy data after implementation
-    setStorageUsage(800.5);
+    setStorageUsage(size);
     if (files.length === 0 && !isLoading && session) {
       void fetchFiles(session);
     }

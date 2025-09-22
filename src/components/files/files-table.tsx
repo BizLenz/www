@@ -116,7 +116,8 @@ export function FilesTable({ data }: { data: File[] }) {
       size: 300,
       cell: ({ row }) => {
         const fileName = row.getValue("file_name");
-        if (typeof fileName !== 'string' || !fileName) throw new Error("File name is required");
+        if (typeof fileName !== "string" || !fileName)
+          throw new Error("File name is required");
         // limit to 120 characters with ellipsis
         const truncatedName =
           fileName.length > 120 ? `${fileName.slice(0, 120)}...` : fileName;
