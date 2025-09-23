@@ -22,7 +22,7 @@ export const useFileStore = create<FileState>()((set, get) => ({
   isLoading: false,
   error: null,
   fetchFiles: async (session: Session) => {
-    if (get().isLoading || get().files.length > 0) {
+    if (get().isLoading) {
       console.log("Files already loaded or loading, skipping fetch.");
       return;
     }

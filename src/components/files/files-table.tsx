@@ -34,7 +34,13 @@ import { useSession } from "next-auth/react";
 import { DeleteConfirmationModal } from "@/components/common/delete-confirmation-modal";
 import { useFileDelete } from "@/hooks/use-delete-file";
 
-export function FilesTable({ data }: { data: File[] }) {
+export function FilesTable({
+  data,
+  onRefetchFiles,
+}: {
+  data: File[];
+  onRefetchFiles: () => void;
+}) {
   const { data: session, status } = useSession();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -74,7 +80,8 @@ export function FilesTable({ data }: { data: File[] }) {
         toast.warning(`'${deleteModal.fileName}' 파일이 삭제되었습니다.`, {
           description: "선택한 파일이 성공적으로 삭제되었습니다.",
         });
-        // TODO: reload the table after a deletion is made
+        onRefetchFiles();
+        handleCloseModal();
       } else {
         console.error("File deletion failed:", result);
         toast.error("파일 삭제에 실패했습니다.");
@@ -251,7 +258,10 @@ export function FilesTable({ data }: { data: File[] }) {
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
-        <FilesUploadButton session={session} />
+        <FilesUploadButton
+          session={session}
+          onRefetchFilesAction={onRefetchFiles}
+        />
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed">

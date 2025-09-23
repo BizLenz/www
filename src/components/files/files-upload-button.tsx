@@ -21,9 +21,13 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 
 interface FilesUploadButtonProps {
   session: Session | null;
+  onRefetchFilesAction: () => void;
 }
 
-export function FilesUploadButton({ session }: FilesUploadButtonProps) {
+export function FilesUploadButton({
+  session,
+  onRefetchFilesAction,
+}: FilesUploadButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | undefined>();
@@ -52,6 +56,8 @@ export function FilesUploadButton({ session }: FilesUploadButtonProps) {
       if (result) {
         console.log("File uploaded successfully:", result);
       }
+      setFiles(undefined);
+      onRefetchFilesAction();
       toggleOpen();
     } catch (error) {
       console.error(error);

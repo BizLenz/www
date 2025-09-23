@@ -1,13 +1,12 @@
 "use client";
 
 import { Progress } from "@/components/ui/progress";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
 import { useSession } from "next-auth/react";
-import { Button } from "@/components/ui/button";
 
 export default function Files() {
   const { data: session, status } = useSession();
@@ -15,12 +14,18 @@ export default function Files() {
 
   const { files, size, isLoading, error, fetchFiles } = useFileStoreShallow();
 
+  const memoizedRefetchFiles = useCallback(() => {
+    if (session) {
+      void fetchFiles(session);
+    }
+  }, [fetchFiles, session]);
+
   useEffect(() => {
     setStorageUsage(size);
     if (files.length === 0 && !isLoading && session) {
       void fetchFiles(session);
     }
-  }, [fetchFiles]);
+  }, [size, files.length, isLoading, session, fetchFiles]);
 
   return (
     <SidebarInset>
@@ -46,7 +51,7 @@ export default function Files() {
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
-          <FilesTable data={files} />
+          <FilesTable data={files} onRefetchFiles={memoizedRefetchFiles} />
         </div>
       </div>
     </SidebarInset>
