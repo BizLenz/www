@@ -28,9 +28,9 @@ export default function Page() {
     isLoading,
     error,
     fetchFiles,
-    sum_files_num,
-    sum_analysis,
-    sum_processing,
+    sumFilesNum,
+    sumAnalysis,
+    sumProcessing,
   } = useFileStoreShallow();
 
   useEffect(() => {
@@ -75,17 +75,17 @@ export default function Page() {
           <StatCard
             icon={<ChartNoAxesColumnIncreasing />}
             title={"총 분석 횟수"}
-            count={sum_analysis}
+            count={sumAnalysis}
           />
           <StatCard
             icon={<Hourglass />}
             title={"분석 진행 중"}
-            count={sum_processing}
+            count={sumProcessing}
           />
           <StatCard
             icon={<Box />}
             title={"업로드된 파일"}
-            count={sum_files_num}
+            count={sumFilesNum}
           />
         </div>
         {/* ROW 2; Files & Recent */}

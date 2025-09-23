@@ -91,14 +91,14 @@ export const useFileStoreShallow = () =>
       isLoading: state.isLoading,
       error: state.error,
       fetchFiles: state.fetchFiles,
-      sum_analysis: state.files.reduce(
+      sumAnalysis: state.files.reduce(
         (acc, file) => acc + (file.status === "completed" ? 1 : 0),
         0,
       ),
-      sum_processing: state.files.reduce(
+      sumProcessing: state.files.reduce(
         (acc, file) => acc + (file.status === "processing" ? 1 : 0),
         0,
       ),
-      sum_files_num: state.files.length,
+      sumFilesNum: state.files.length,
     })),
   );
