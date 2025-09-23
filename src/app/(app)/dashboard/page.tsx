@@ -27,7 +27,6 @@ export default function Page() {
   useEffect(() => {
     // TODO: add team fetches
     setTeamName("test");
-    // TODO: remove dummy data after implementation
     setStorageUsage(size);
     if (files.length === 0 && !isLoading && session) {
       void fetchFiles(session);
