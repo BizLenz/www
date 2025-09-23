@@ -84,7 +84,7 @@ export const useFileStoreShallow = () =>
       files: state.files,
       size: Number(
         (
-          state.files.reduce((acc, file) => acc + (file.file_size || 0), 0) /
+          state.files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
           1_048_576
         ).toFixed(2),
       ), // MiB
