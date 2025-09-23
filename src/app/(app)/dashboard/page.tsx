@@ -22,7 +22,16 @@ export default function Page() {
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, size, isLoading, error, fetchFiles } = useFileStoreShallow();
+  const {
+    files,
+    size,
+    isLoading,
+    error,
+    fetchFiles,
+    sum_files_num,
+    sum_analysis,
+    sum_processing,
+  } = useFileStoreShallow();
 
   useEffect(() => {
     // TODO: add team fetches
@@ -66,10 +75,18 @@ export default function Page() {
           <StatCard
             icon={<ChartNoAxesColumnIncreasing />}
             title={"총 분석 횟수"}
-            count={5}
+            count={sum_analysis}
           />
-          <StatCard icon={<Hourglass />} title={"분석 진행 중"} count={1} />
-          <StatCard icon={<Box />} title={"업로드된 파일"} count={12} />
+          <StatCard
+            icon={<Hourglass />}
+            title={"분석 진행 중"}
+            count={sum_processing}
+          />
+          <StatCard
+            icon={<Box />}
+            title={"업로드된 파일"}
+            count={sum_files_num}
+          />
         </div>
         {/* ROW 2; Files & Recent */}
         <div className="flex w-full gap-4">
