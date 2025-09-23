@@ -10,6 +10,20 @@ import StatusBubble from "@/components/common/status-bubble";
 import type { File } from "@/types/file";
 
 export function DashboardRecentView({ recentFiles }: { recentFiles: File[] }) {
+  const truncatedFiles = recentFiles.map((file) => {
+    if (typeof file.file_name !== "string" || !file.file_name) {
+      throw new Error("File name is required");
+    }
+    const truncatedName =
+      file.file_name.length > 60
+        ? `${file.file_name.slice(0, 60)}...`
+        : file.file_name;
+    return {
+      ...file,
+      file_name: truncatedName,
+    };
+  });
+
   return (
     <div className="flex h-full flex-col gap-4 rounded-xl border-1 p-5">
       <h2 className="text-2xl font-bold">최근 활동 목록</h2>
@@ -26,8 +40,8 @@ export function DashboardRecentView({ recentFiles }: { recentFiles: File[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {recentFiles.length > 0 ? (
-            recentFiles.map((file) => (
+          {truncatedFiles.length > 0 ? (
+            truncatedFiles.map((file) => (
               <TableRow key={file.id}>
                 <TableCell className="font-medium">기본분석</TableCell>
                 <TableCell>

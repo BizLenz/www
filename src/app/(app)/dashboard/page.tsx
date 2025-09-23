@@ -94,10 +94,12 @@ export default function Page() {
             <DashboardFileForm />
           </div>
           <div className="flex-1">
+            {/* TODO: fetch recentFiles from backend */}
             <DashboardRecentView recentFiles={recentActivityData} />
           </div>
         </div>
         {/* ROW 3; Notifications */}
+        {/* TODO: fetch from backend */}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
             <div className="text-lg font-semibold">알림 및 공지</div>
