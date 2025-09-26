@@ -26,6 +26,7 @@ declare module "next-auth" {
     id_token?: string;
     refresh_token?: string;
     expires_in?: number;
+    accessTokenExpiresAt?: number;
   }
 
   // interface User {
@@ -59,11 +60,17 @@ async function refreshCognitoAccessToken(refreshToken: string) {
     }
 
     const data = (await response.json()) as JWT;
+
+    const expiresIn = data.expires_in;
+    if (!expiresIn) {
+        throw new Error('Missing expires_in from token response');
+    }
+
     return {
       accessToken: data.access_token,
       idToken: data.id_token,
       refreshToken: data.refresh_token ?? refreshToken,
-      expiresAt: Math.floor(Date.now() / 1000) + data.expires_in,
+      expiresAt: Math.floor(Date.now() / 1000) + expiresIn,
     };
   } catch (error: unknown) {
     const errorMessage = getErrorMessage(error);
@@ -117,13 +124,13 @@ export const authConfig = {
       if (
         !token.accessToken ||
         (token.accessTokenExpiresAt &&
-          Date.now() / 1000 > token.accessTokenExpiresAt)
+          Date.now() / 1000 > (token.accessTokenExpiresAt as number))
       ) {
         if (token.refreshToken) {
           try {
             console.log("Attempting to refresh access token...");
             const refreshedTokens = await refreshCognitoAccessToken(
-              token.refreshToken,
+              token.refreshToken as string,
             );
 
             token.accessToken = refreshedTokens.accessToken;
@@ -160,14 +167,14 @@ export const authConfig = {
       if (
         token.accessToken &&
         (!token.accessTokenExpiresAt ||
-          Date.now() / 1000 < token.accessTokenExpiresAt)
+          Date.now() / 1000 < (token.accessTokenExpiresAt as number))
       ) {
-        session.accessToken = token.accessToken;
+        session.accessToken = token.accessToken as string;
       } else {
         session.accessToken = undefined; // expired token is not passed
       }
 
-      session.idToken = token.idToken;
+      session.idToken = token.idToken as string;
 
       if (token.sub) {
         return {
