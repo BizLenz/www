@@ -1,5 +1,3 @@
-// TODO: calculate storage usage & export
-
 import { create } from "zustand";
 import { type File, fileSchema } from "@/types/file";
 import { z } from "zod";
@@ -11,6 +9,7 @@ export interface FileState {
   files: File[];
   isLoading: boolean;
   error: string | null;
+  lastFetchSuccessful: boolean | null;
   fetchFiles: (session: Session) => Promise<void>;
 }
 
@@ -23,8 +22,9 @@ export const useFileStore = create<FileState>()((set, get) => ({
   files: [],
   isLoading: false,
   error: null,
+  lastFetchSuccessful: null,
   fetchFiles: async (session: Session) => {
-    if (get().isLoading || get().files.length > 0) {
+    if (get().isLoading) {
       console.log("Files already loaded or loading, skipping fetch.");
       return;
     }
@@ -34,7 +34,7 @@ export const useFileStore = create<FileState>()((set, get) => ({
       return;
     }
 
-    set({ isLoading: true, error: null });
+    set({ isLoading: true, error: null, lastFetchSuccessful: null });
     try {
       const response = await fetch("http://localhost:8000/files/search", {
         method: "GET",
@@ -55,10 +55,21 @@ export const useFileStore = create<FileState>()((set, get) => ({
       console.log(data);
 
       const { success, results } = data as FileResponse;
-      if (!success) throw new Error("Failed to fetch files");
+      if (!success) {
+        set({
+          error: "Failed to fetch files: API reported failure.",
+          isLoading: false,
+          lastFetchSuccessful: false,
+        });
+        return;
+      }
       const filesArraySchema = z.array(fileSchema);
       const validatedFiles = filesArraySchema.parse(results);
-      set({ files: validatedFiles, isLoading: false });
+      set({
+        files: validatedFiles,
+        isLoading: false,
+        lastFetchSuccessful: true,
+      });
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error("Failed to fetch files:", err.message);
@@ -84,8 +95,24 @@ export const useFileStoreShallow = () =>
   useFileStore(
     useShallow((state: FileState) => ({
       files: state.files,
+      size: Number(
+        (
+          state.files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
+          1_048_576
+        ).toFixed(2),
+      ), // MiB
       isLoading: state.isLoading,
       error: state.error,
+      lastFetchSuccessful: state.lastFetchSuccessful,
       fetchFiles: state.fetchFiles,
+      sumAnalysis: state.files.reduce(
+        (acc, file) => acc + (file.status === "completed" ? 1 : 0),
+        0,
+      ),
+      sumProcessing: state.files.reduce(
+        (acc, file) => acc + (file.status === "processing" ? 1 : 0),
+        0,
+      ),
+      sumFilesNum: state.files.length,
     })),
   );
