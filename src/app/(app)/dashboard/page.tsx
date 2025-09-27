@@ -27,6 +27,7 @@ export default function Page() {
     size,
     isLoading,
     error,
+    lastFetchSuccessful,
     fetchFiles,
     sumFilesNum,
     sumAnalysis,
@@ -37,7 +38,12 @@ export default function Page() {
     // TODO: add team fetches
     setTeamName("test");
     setStorageUsage(size);
-    if (files.length === 0 && !isLoading && session) {
+    if (
+      lastFetchSuccessful === null &&
+      files.length === 0 &&
+      !isLoading &&
+      session
+    ) {
       void fetchFiles(session);
     }
   }, [files.length, isLoading, fetchFiles]);

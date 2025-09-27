@@ -12,7 +12,8 @@ export default function Files() {
   const { data: session, status } = useSession();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, size, isLoading, error, fetchFiles } = useFileStoreShallow();
+  const { files, size, isLoading, error, lastFetchSuccessful, fetchFiles } =
+    useFileStoreShallow();
 
   const memoizedRefetchFiles = useCallback(() => {
     if (session) {
@@ -22,7 +23,12 @@ export default function Files() {
 
   useEffect(() => {
     setStorageUsage(size);
-    if (files.length === 0 && !isLoading && session) {
+    if (
+      lastFetchSuccessful === null &&
+      files.length === 0 &&
+      !isLoading &&
+      session
+    ) {
       void fetchFiles(session);
     }
   }, [size, files.length, isLoading, session, fetchFiles]);
