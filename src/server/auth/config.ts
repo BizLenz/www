@@ -2,6 +2,16 @@ import { type DefaultSession, type NextAuthConfig } from "next-auth";
 import { type JWT } from "next-auth/jwt";
 import Cognito from "next-auth/providers/cognito";
 
+interface CognitoTokenResponse {
+    access_token: string;
+    id_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
+    scope: string;
+    error?: string;
+}
+
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
  * object and keep type safety.
@@ -67,7 +77,7 @@ export const authConfig = {
           accessToken: account.access_token,
           idToken: account.id_token,
           refreshToken: account.refresh_token,
-          expiresAt: Date.now() / 1000 + (account.expires_in || 3600), // Default 1 hour
+          expiresAt: Date.now() / 1000 + (account.expires_in ?? 3600), // Default 1 hour
           provider: account.provider,
         };
       }
@@ -102,7 +112,7 @@ export const authConfig = {
           },
         );
 
-        const tokens = await response.json();
+        const tokens = await response.json() as CognitoTokenResponse;
 
         if (!response.ok) {
           console.error("Cognito token refresh failed:", tokens);
@@ -118,7 +128,7 @@ export const authConfig = {
           ...token,
           accessToken: tokens.access_token,
           idToken: tokens.id_token,
-          refreshToken: tokens.refresh_token || token.refreshToken,
+          refreshToken: tokens.refresh_token ?? token.refreshToken,
           expiresAt: Date.now() / 1000 + tokens.expires_in,
           error: undefined,
         };
