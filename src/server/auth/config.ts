@@ -96,7 +96,7 @@ export const authConfig = {
         ).toString("base64");
 
         const response = await fetch(
-          `https://${process.env.AUTH_COGNITO_DOMAIN}.auth.ap-northeast.amazonaws.com/oauth2/token`,
+          `${process.env.AUTH_COGNITO_DOMAIN}/oauth2/token`,
           {
             method: "POST",
             headers: {
