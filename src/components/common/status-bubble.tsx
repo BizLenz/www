@@ -1,6 +1,10 @@
-// TODO: add fallback UI if status does not exist
-
-import { CircleCheck, Clock, LoaderCircle, X } from "lucide-react";
+import {
+  CircleCheck,
+  Clock,
+  FileQuestionMark,
+  LoaderCircle,
+  X,
+} from "lucide-react";
 import * as React from "react";
 import { Badge } from "@/components/ui/badge";
 
@@ -41,7 +45,12 @@ function renderStatus(status?: FileStatus) {
         </div>
       );
     default:
-      return <span>{status}</span>;
+      return (
+        <div className="flex items-center gap-2">
+          <FileQuestionMark className="text-muted-foreground size-4" />
+          <span>Unknown</span>
+        </div>
+      );
   }
 }
 

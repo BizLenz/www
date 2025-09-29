@@ -22,14 +22,28 @@ export default function Page() {
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, isLoading, error, fetchFiles } = useFileStoreShallow();
+  const {
+    files,
+    size,
+    isLoading,
+    error,
+    lastFetchSuccessful,
+    fetchFiles,
+    sumFilesNum,
+    sumAnalysis,
+    sumProcessing,
+  } = useFileStoreShallow();
 
   useEffect(() => {
     // TODO: add team fetches
     setTeamName("test");
-    // TODO: remove dummy data after implementation
-    setStorageUsage(800.5);
-    if (files.length === 0 && !isLoading && session) {
+    setStorageUsage(size);
+    if (
+      lastFetchSuccessful === null &&
+      files.length === 0 &&
+      !isLoading &&
+      session
+    ) {
       void fetchFiles(session);
     }
   }, [files.length, isLoading, fetchFiles]);
@@ -67,10 +81,18 @@ export default function Page() {
           <StatCard
             icon={<ChartNoAxesColumnIncreasing />}
             title={"총 분석 횟수"}
-            count={5}
+            count={sumAnalysis}
           />
-          <StatCard icon={<Hourglass />} title={"분석 진행 중"} count={1} />
-          <StatCard icon={<Box />} title={"업로드된 파일"} count={12} />
+          <StatCard
+            icon={<Hourglass />}
+            title={"분석 진행 중"}
+            count={sumProcessing}
+          />
+          <StatCard
+            icon={<Box />}
+            title={"업로드된 파일"}
+            count={sumFilesNum}
+          />
         </div>
         {/* ROW 2; Files & Recent */}
         <div className="flex w-full gap-4">
@@ -78,10 +100,12 @@ export default function Page() {
             <DashboardFileForm />
           </div>
           <div className="flex-1">
+            {/* TODO: fetch recentFiles from backend */}
             <DashboardRecentView recentFiles={recentActivityData} />
           </div>
         </div>
         {/* ROW 3; Notifications */}
+        {/* TODO: fetch from backend */}
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
             <div className="text-lg font-semibold">알림 및 공지</div>
