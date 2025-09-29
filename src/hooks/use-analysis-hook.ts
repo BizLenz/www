@@ -54,17 +54,17 @@ export const useAnalysis = (): UseAnalysisHook => {
           },
           body: JSON.stringify({
             ...request,
-            timeout_sec: request.timeout_sec || 300, // Default 5 minutes
-            json_model: request.json_model || "gemini-2.5-flash", // Default model
+            timeout_sec: request.timeout_sec ?? 300, // Default 5 minutes
+            json_model: request.json_model ?? "gemini-2.5-flash", // Default model
           }),
         });
 
         if (!response.ok) {
-          const errorData: ApiError = await response.json();
+          const errorData = await response.json() as ApiError;
           throw new Error(errorData.detail || `HTTP ${response.status}`);
         }
 
-        const data: AnalysisResponse = await response.json();
+        const data = await response.json() as AnalysisResponse;
         return data;
       } catch (err) {
         const errorMessage =
