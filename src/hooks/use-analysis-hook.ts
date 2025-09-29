@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
+import { useAiModelStore } from "@/store/analyze-store";
 
 interface AnalysisRequest {
   s3_key: string;
@@ -33,6 +34,7 @@ export const useAnalysis = (): UseAnalysisHook => {
   const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
+  const { aiModel } = useAiModelStore();
 
   const analyzeDocument = useCallback(
     async (request: AnalysisRequest): Promise<AnalysisResponse | null> => {
@@ -46,7 +48,7 @@ export const useAnalysis = (): UseAnalysisHook => {
       }
 
       try {
-        const response = await fetch("/api/v1/analysis/request", {
+        const response = await fetch("/evaluation/request", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${session.accessToken}`,
@@ -55,16 +57,16 @@ export const useAnalysis = (): UseAnalysisHook => {
           body: JSON.stringify({
             ...request,
             timeout_sec: request.timeout_sec ?? 300, // Default 5 minutes
-            json_model: request.json_model ?? "gemini-2.5-flash", // Default model
+            json_model: aiModel,
           }),
         });
 
         if (!response.ok) {
-          const errorData = await response.json() as ApiError;
+          const errorData = (await response.json()) as ApiError;
           throw new Error(errorData.detail || `HTTP ${response.status}`);
         }
 
-        const data = await response.json() as AnalysisResponse;
+        const data = (await response.json()) as AnalysisResponse;
         return data;
       } catch (err) {
         const errorMessage =
