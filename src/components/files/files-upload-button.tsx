@@ -21,9 +21,13 @@ import { useFileUpload } from "@/hooks/use-file-upload";
 
 interface FilesUploadButtonProps {
   session: Session | null;
+  onRefetchFilesAction: () => void;
 }
 
-export function FilesUploadButton({ session }: FilesUploadButtonProps) {
+export function FilesUploadButton({
+  session,
+  onRefetchFilesAction,
+}: FilesUploadButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | undefined>();
@@ -52,6 +56,8 @@ export function FilesUploadButton({ session }: FilesUploadButtonProps) {
       if (result) {
         console.log("File uploaded successfully:", result);
       }
+      setFiles(undefined);
+      onRefetchFilesAction();
       toggleOpen();
     } catch (error) {
       console.error(error);
@@ -78,10 +84,9 @@ export function FilesUploadButton({ session }: FilesUploadButtonProps) {
             <DialogTitle>파일 업로드</DialogTitle>
             <DialogDescription>원하는 파일을 선택해주세요. </DialogDescription>
           </DialogHeader>
-          {/* TODO: Check backend for actual size limits */}
           <Dropzone
             accept={{ "application/pdf": [] }}
-            maxSize={1024 * 1024 * 50}
+            maxSize={1024 * 1024 * 50} // 50MB
             minSize={1024}
             onDrop={handleDrop}
             onError={console.error}
