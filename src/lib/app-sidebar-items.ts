@@ -1,10 +1,12 @@
 import {
   Bot,
+  Brain,
   Frame,
   Map,
   PieChart,
   Settings2,
   SquareTerminal,
+  Zap,
 } from "lucide-react";
 
 import type { StaticAppData } from "@/types/sidebar";
@@ -37,12 +39,12 @@ export const staticAppData: StaticAppData = {
       icon: Bot,
       items: [
         {
-          title: "Gemini-2.5-Flash",
-          url: "#",
+          title: "gemini-2.5-flash",
+          icon: Zap,
         },
         {
-          title: "Gemini-2.5-Pro",
-          url: "#",
+          title: "gemini-2.5-pro",
+          icon: Brain,
         },
       ],
     },
@@ -68,7 +70,7 @@ export const staticAppData: StaticAppData = {
   reports: [
     {
       name: "보고서",
-      url: "#",
+      url: "results",
       icon: Frame,
     },
     {
