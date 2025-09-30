@@ -36,13 +36,16 @@ export const useFileStore = create<FileState>()((set, get) => ({
 
     set({ isLoading: true, error: null, lastFetchSuccessful: null });
     try {
-      const response = await fetch("http://localhost:8000/files/search", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/files/search`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         const errorText = await response.text();

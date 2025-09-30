@@ -4,10 +4,10 @@ import { toast } from "sonner";
 import { useAiModelStore } from "@/store/analyze-store";
 
 interface AnalysisRequest {
-  s3_key: string;
+  file_path: string;
   timeout_sec?: number;
   contest_type: string;
-  json_model?: string;
+  analysis_model?: string;
 }
 
 interface AnalysisResponse {
@@ -48,18 +48,21 @@ export const useAnalysis = (): UseAnalysisHook => {
       }
 
       try {
-        const response = await fetch("/evaluation/request", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/evaluation/request`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${session.accessToken}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ...request,
+              timeout_sec: request.timeout_sec ?? 300, // Default 5 minutes
+              analysis_model: aiModel,
+            }),
           },
-          body: JSON.stringify({
-            ...request,
-            timeout_sec: request.timeout_sec ?? 300, // Default 5 minutes
-            json_model: aiModel,
-          }),
-        });
+        );
 
         if (!response.ok) {
           const errorData = (await response.json()) as ApiError;
