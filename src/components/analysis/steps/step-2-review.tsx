@@ -15,7 +15,7 @@ export function Step2Review({ fileId }: Step2ReviewProps) {
   return (
     <div>
       <h4 className="mb-2 font-semibold">최종 확인</h4>
-      <p>평가 양식: {settings.program ?? "선택 안 함"}</p>
+      <p>평가 양식: {settings.contestType ?? "선택 안 함"}</p>
       <p>분석 범위: {allScopes.length ? allScopes.join(", ") : "선택 안 함"}</p>
     </div>
   );

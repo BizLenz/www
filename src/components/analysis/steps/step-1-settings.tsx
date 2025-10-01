@@ -25,6 +25,7 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
 
   const toggleScope = useCallback(
     (scope: string, checked: boolean) => {
+      // TODO: seems like analysisScope setting is not working
       const current = settings.analysisScope ?? [];
       if (checked) {
         setSettings(fileId, { analysisScope: [...current, scope] });
@@ -43,8 +44,8 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
       <div className="space-y-2">
         <div className="text-lg font-semibold">평가 양식 선택</div>
         <ProgramComboBox
-          value={settings.program ?? ""}
-          onChange={(value) => setSettings(fileId, { program: value })}
+          value={settings.contestType ?? ""}
+          onChange={(value) => setSettings(fileId, { contestType: value })}
         />
       </div>
 
