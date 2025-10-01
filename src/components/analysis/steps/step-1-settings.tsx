@@ -1,7 +1,7 @@
 import { type FileSettings, useAnalyzeStore } from "@/store/analyze-store";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProgramComboBox } from "@/components/analysis/program-combo-box";
+import { ContestTypeComboBox } from "@/components/analysis/contest-type-combo-box";
 import { useCallback } from "react";
 
 interface Step1SettingsProps {
@@ -43,7 +43,7 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
       {/* 평가 양식 선택 */}
       <div className="space-y-2">
         <div className="text-lg font-semibold">평가 양식 선택</div>
-        <ProgramComboBox
+        <ContestTypeComboBox
           value={settings.contestType ?? ""}
           onChange={(value) => setSettings(fileId, { contestType: value })}
         />

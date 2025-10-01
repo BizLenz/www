@@ -18,22 +18,22 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-type Program = {
+type Contest = {
   value: string;
   label: string;
 };
 
-const items: Program[] = [{ value: "예비창업패키지", label: "예비창업패키지" }];
+const items: Contest[] = [{ value: "예비창업패키지", label: "예비창업패키지" }];
 
-interface ProgramComboBoxProps {
+interface ContestTypeComboBoxProps {
   value?: string;
   onChange?: (value: string) => void;
 }
 
-export function ProgramComboBox({
+export function ContestTypeComboBox({
   value: controlledValue,
   onChange,
-}: ProgramComboBoxProps) {
+}: ContestTypeComboBoxProps) {
   const [open, setOpen] = React.useState(false);
   const [uncontrolledValue, setUncontrolledValue] = React.useState("");
 
