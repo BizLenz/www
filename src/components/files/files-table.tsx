@@ -36,10 +36,10 @@ import { useFileDelete } from "@/hooks/use-delete-file";
 
 export function FilesTable({
   data,
-  onRefetchFiles,
+  onRefetchFilesAction,
 }: {
   data: File[];
-  onRefetchFiles: () => void;
+  onRefetchFilesAction: () => void;
 }) {
   const { data: session, status } = useSession();
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -80,7 +80,7 @@ export function FilesTable({
         toast.warning(`'${deleteModal.fileName}' 파일이 삭제되었습니다.`, {
           description: "선택한 파일이 성공적으로 삭제되었습니다.",
         });
-        onRefetchFiles();
+        onRefetchFilesAction();
         handleCloseModal();
       } else {
         console.error("File deletion failed:", result);
@@ -205,7 +205,7 @@ export function FilesTable({
                 결과확인
               </Button>
             ) : (
-              <AnalysisButton fileId={file.id} fileName={file.file_name} />
+              <AnalysisButton fileId={file.id} />
             )}
             <Button
               variant="destructive"
@@ -260,7 +260,7 @@ export function FilesTable({
         />
         <FilesUploadButton
           session={session}
-          onRefetchFilesAction={onRefetchFiles}
+          onRefetchFilesAction={onRefetchFilesAction}
         />
       </div>
       <div className="rounded-md border">
