@@ -66,7 +66,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         );
 
         if (!response.ok) {
-          const errorData = await response.json() as ApiError;
+          const errorData = (await response.json()) as ApiError;
           const errorMessage =
             errorData.detail || `HTTP error! status: ${response.status}`;
           const statusCode = response.status;
