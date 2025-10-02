@@ -17,7 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import { useAiModelStore } from "@/store/analyze-store";
+import { useAiModelStore } from "@/store/ai-model-store";
 
 export function NavMain({
   items,

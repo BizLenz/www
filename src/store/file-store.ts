@@ -94,6 +94,8 @@ export const useFileStore = create<FileState>()((set, get) => ({
   },
 }));
 
+const BYTES_IN_MEGABYTE = 1_048_576;
+
 export const useFileStoreShallow = () =>
   useFileStore(
     useShallow((state: FileState) => ({
@@ -101,9 +103,9 @@ export const useFileStoreShallow = () =>
       size: Number(
         (
           state.files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
-          1_048_576
+          BYTES_IN_MEGABYTE
         ).toFixed(2),
-      ), // MiB
+      ),
       isLoading: state.isLoading,
       error: state.error,
       lastFetchSuccessful: state.lastFetchSuccessful,

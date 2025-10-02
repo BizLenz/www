@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { type FileSettings, useAnalyzeStore } from "@/store/analyze-store";
+import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 import { Step1Settings } from "./steps/step-1-settings";
 import { Step2Review } from "./steps/step-2-review";
 import { useAnalysis } from "@/hooks/use-analysis-hook";

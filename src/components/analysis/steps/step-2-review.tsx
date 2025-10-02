@@ -1,4 +1,4 @@
-import { type FileSettings, useAnalyzeStore } from "@/store/analyze-store";
+import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 
 interface Step2ReviewProps {
   fileId: number;
