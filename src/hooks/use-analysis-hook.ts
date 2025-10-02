@@ -44,6 +44,7 @@ export const useAnalysis = (): UseAnalysisHook => {
       if (!session?.accessToken) {
         toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
         setError({ detail: "Not authenticated.", status_code: 401 });
+        setIsLoading(false); // Set loading to false before returning
         return null;
       }
 
@@ -65,26 +66,29 @@ export const useAnalysis = (): UseAnalysisHook => {
         );
 
         if (!response.ok) {
-          const errorData = (await response.json()) as ApiError;
-          throw new Error(errorData.detail || `HTTP ${response.status}`);
+          const errorData = await response.json();
+          const errorMessage =
+            errorData.detail || `HTTP error! status: ${response.status}`;
+          const statusCode = response.status;
+          setError({ detail: errorMessage, status_code: statusCode });
+          return null;
         }
 
         const data = (await response.json()) as AnalysisResponse;
         return data;
       } catch (err) {
         const errorMessage =
-          err instanceof Error ? err.message : "분석 요청 중 오류 발생";
+          err instanceof Error ? err.message : "An unknown error occurred";
         setError({
           detail: errorMessage,
-          status_code:
-            err instanceof Error && err.message.includes("404") ? 404 : 500,
+          status_code: 500,
         });
         return null;
       } finally {
         setIsLoading(false);
       }
     },
-    [],
+    [session, aiModel],
   );
 
   const resetError = useCallback(() => {
