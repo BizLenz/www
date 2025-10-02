@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
-import { useAiModelStore } from "@/store/analyze-store";
+import { useAiModelStore } from "@/store/ai-model-store";
 
 interface AnalysisRequest {
   file_path: string;
@@ -66,7 +66,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         );
 
         if (!response.ok) {
-          const errorData = await response.json();
+          const errorData = await response.json() as ApiError;
           const errorMessage =
             errorData.detail || `HTTP error! status: ${response.status}`;
           const statusCode = response.status;
