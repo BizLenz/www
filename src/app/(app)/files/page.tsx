@@ -57,7 +57,10 @@ export default function Files() {
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
-          <FilesTable data={files} onRefetchFiles={memoizedRefetchFiles} />
+          <FilesTable
+            data={files}
+            onRefetchFilesAction={memoizedRefetchFiles}
+          />
         </div>
       </div>
     </SidebarInset>

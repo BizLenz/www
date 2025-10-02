@@ -23,20 +23,16 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
   const settings = useAnalyzeStore((s) => s.files[fileId] ?? EMPTY_SETTINGS);
   const setSettings = useAnalyzeStore((s) => s.setFileSettings);
 
-  const toggleScope = useCallback(
-    (scope: string, checked: boolean) => {
-      // TODO: seems like analysisScope setting is not working
-      const current = settings.analysisScope ?? [];
-      if (checked) {
-        setSettings(fileId, { analysisScope: [...current, scope] });
-      } else {
-        setSettings(fileId, {
-          analysisScope: current.filter((s) => s !== scope),
-        });
-      }
-    },
-    [fileId, settings.analysisScope, setSettings],
-  );
+  const toggleScope = (scope: string, checked: boolean) => {
+    const current = settings.analysisScope ?? [];
+    if (checked) {
+      setSettings(fileId, { analysisScope: [...current, scope] });
+    } else {
+      setSettings(fileId, {
+        analysisScope: current.filter((s) => s !== scope),
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">

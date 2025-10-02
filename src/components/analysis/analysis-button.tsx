@@ -19,17 +19,10 @@ import { useFileStore } from "@/store/file-store";
 
 interface AnalysisButtonProps {
   fileId: number;
-  fileName: string;
-  filePath: string;
-  contestType: string;
   onConfirm?: (fileId: number) => Promise<void> | void;
 }
 
-export function AnalysisButton({
-  fileId,
-  fileName,
-  onConfirm,
-}: AnalysisButtonProps) {
+export function AnalysisButton({ fileId, onConfirm }: AnalysisButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<0 | 1>(0);
@@ -67,9 +60,6 @@ export function AnalysisButton({
     try {
       setLoading(true);
       if (onConfirm) await onConfirm(fileId);
-      toast.success(`'${fileName}' 분석을 요청했습니다.`);
-
-      resetFile(fileId);
 
       const file = fileStore.files.find((f) => f.id === fileId);
 
@@ -77,6 +67,10 @@ export function AnalysisButton({
         toast.error("File not found.");
         return;
       }
+
+      toast.success(`'${file.file_name}' 분석을 요청했습니다.`);
+
+      resetFile(fileId);
 
       const request = {
         file_path: file.file_path,
@@ -88,7 +82,7 @@ export function AnalysisButton({
 
       if (result) {
         // TODO: move user to analysis result page
-        toast.success(`'${fileName}' 분석을 완료했습니다.`);
+        toast.success(`'${file.file_name}' 분석을 완료했습니다.`);
       }
 
       handleClose();
