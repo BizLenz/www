@@ -49,6 +49,6 @@
     "node_modules",
     ".next",
     "dist",
-    "coverage",
+    "coverage","sst.config.ts"
   ]
 }
