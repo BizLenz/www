@@ -1,7 +1,39 @@
 <p align="center">
- 	<img alt="logo" src="" width="300">
- </p>
-<h1 align="center" style="margin: 30px 0 30px; font-weight: bold;">BizLenz/www</h1>
+  <picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/BizLenz/.github/refs/heads/main/assets/logo/logo_dark.svg">
+  <img src="https://raw.githubusercontent.com/BizLenz/.github/refs/heads/main/assets/logo/logo_light.svg" width="130" alt="Logo for BizLenz">
+</picture>
+</p>
 
-## README.md
+<h1 align="center">
+  BizLenz
+</h1>
+
+<p align="center">
+  AI-powered business proposal analysis tool for the web
+</p>
+
+> BizLenz는 과학기술정보통신부 대학디지털교육역량강화사업의 지원을 통해 수행한
+> 한이음 드림업 프로젝트 결과물입니다.
+
+## www
+
 Frontend for BizLenz.
+
+### Usage
+
+`pnpm` is expected to run this app. See [here](https://pnpm.io/installation) for installation.
+
+```bash
+pnpm dev # Run the app in development mode
+pnpm start # Run the app in production mode
+pnpm build # Build the app
+```
+
+### System Architecture
+
+<img src="https://raw.githubusercontent.com/BizLenz/.github/refs/heads/main/assets/architecture/www_architecture.svg" alt="www_architecture" width="600"/>
+
+The frontend was developed using the Next.js framework as it enables server‑side rendering, optimized performance, and efficient integration of dynamic AI‑driven content.
+
+It heavily utilizes the [shadcn/ui](https://ui.shadcn.com/) component library, allowing rapid interface development and maintaining consistent design efficiency even with a single developer on the FE side.
