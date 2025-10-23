@@ -71,7 +71,10 @@ export default function Page() {
                 <small className="text-sm leading-none font-medium">
                   {storageUsage}MiB/1GiB
                 </small>
-                <Progress value={storageUsage / (GIGABYTE_IN_MEGABYTES / 100)} className="w-[20%]" />
+                <Progress
+                  value={storageUsage / (GIGABYTE_IN_MEGABYTES / 100)}
+                  className="w-[20%]"
+                />
               </>
             ) : (
               <></>
