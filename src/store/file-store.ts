@@ -29,7 +29,7 @@ export const useFileStore = create<FileState>()((set, get) => ({
       return;
     }
 
-    if (!session || !session.user) {
+    if (!session?.user) {
       set({ error: "User session not available.", isLoading: false });
       return;
     }

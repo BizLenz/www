@@ -1,5 +1,6 @@
 import { normalizeAnalysisResult } from "@/lib/normalize-analysis";
 import type { Session } from "next-auth";
+import type { AnalysisResult } from "@/types/analysis-result";
 
 export async function getResult(id: string, session: Session | null) {
   if (!session) {
@@ -18,6 +19,6 @@ export async function getResult(id: string, session: Session | null) {
     },
   );
   if (!res.ok) throw new Error("Failed to fetch result");
-  const data = await res.json();
+  const data = (await res.json()) as AnalysisResult;
   return normalizeAnalysisResult(data);
 }
