@@ -1,8 +1,5 @@
-// TODO: fetch from backend after DB gets fixed
-
 "use client";
 
-import { type AnalysisResult } from "@/types/analysis-result";
 import {
   ScoreChart,
   FeedbackCard,
@@ -11,27 +8,13 @@ import {
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Lightbulb, ThumbsDown, ThumbsUp } from "lucide-react";
+import type { normalizeAnalysisResult } from "@/lib/normalize-analysis";
 
-// --- MOCK DATA TYPE ---
-type MockAnalysisResult = {
-  title: string;
-  total_score: number;
-  overall_assessment: string;
-  strengths: string[];
-  weaknesses: string[];
-  improvement_suggestions: string[];
-  evaluation_criteria: Array<{
-    category: string;
-    score: number;
-    max_score: number;
-    min_score_required: number;
-    is_passed: boolean;
-    sub_criteria: Array<{ name: string; score: number }>;
-    reasoning: string;
-  }>;
-};
-
-export default function ReportView({ result }: { result: MockAnalysisResult }) {
+export default function ReportView({
+  result,
+}: {
+  result: ReturnType<typeof normalizeAnalysisResult>;
+}) {
   const {
     title,
     total_score,
@@ -62,7 +45,9 @@ export default function ReportView({ result }: { result: MockAnalysisResult }) {
                   isFailing ? "text-destructive" : "text-green-500",
                 )}
               >
-                {total_score.toFixed(1)}
+                {typeof total_score === "number"
+                  ? total_score.toFixed(1)
+                  : Number(total_score || 0).toFixed(1)}
                 <span className="text-muted-foreground text-lg font-medium">
                   / 100
                 </span>

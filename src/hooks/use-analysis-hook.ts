@@ -16,6 +16,10 @@ interface AnalysisResponse {
   contest_type: string;
 }
 
+interface AnalysisResultRequest {
+  id: number;
+}
+
 interface ApiError {
   detail: string;
   status_code: number;
@@ -24,6 +28,9 @@ interface ApiError {
 interface UseAnalysisHook {
   analyzeDocument: (
     request: AnalysisRequest,
+  ) => Promise<AnalysisResponse | null>;
+  getAnalysisResult: (
+    request: AnalysisResultRequest,
   ) => Promise<AnalysisResponse | null>;
   isLoading: boolean;
   error: ApiError | null;
@@ -44,7 +51,7 @@ export const useAnalysis = (): UseAnalysisHook => {
       if (!session?.accessToken) {
         toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
         setError({ detail: "Not authenticated.", status_code: 401 });
-        setIsLoading(false); // Set loading to false before returning
+        setIsLoading(false);
         return null;
       }
 
@@ -67,20 +74,70 @@ export const useAnalysis = (): UseAnalysisHook => {
 
         if (!response.ok) {
           const errorData = (await response.json()) as ApiError;
-          const errorMessage =
-            errorData.detail || `HTTP error! status: ${response.status}`;
-          const statusCode = response.status;
-          setError({ detail: errorMessage, status_code: statusCode });
+          setError({
+            detail:
+              errorData.detail || `HTTP error! status: ${response.status}`,
+            status_code: response.status,
+          });
           return null;
         }
 
-        const data = (await response.json()) as AnalysisResponse;
-        return data;
+        return (await response.json()) as AnalysisResponse;
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "An unknown error occurred";
         setError({
-          detail: errorMessage,
+          detail:
+            err instanceof Error ? err.message : "An unknown error occurred",
+          status_code: 500,
+        });
+        return null;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [session, aiModel],
+  );
+
+  const getAnalysisResult = useCallback(
+    async (
+      request: AnalysisResultRequest,
+    ): Promise<AnalysisResponse | null> => {
+      setIsLoading(true);
+      setError(null);
+
+      if (!session?.accessToken) {
+        toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
+        setError({ detail: "Not authenticated.", status_code: 401 });
+        setIsLoading(false);
+        return null;
+      }
+
+      try {
+        // TODO: REMOVE def
+        const resultId = request.id || 16;
+        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/evaluation/results/${resultId}`;
+
+        const response = await fetch(url, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+          },
+        });
+
+        if (!response.ok) {
+          const errorData = (await response.json()) as ApiError;
+          setError({
+            detail:
+              errorData.detail || `HTTP error! status: ${response.status}`,
+            status_code: response.status,
+          });
+          return null;
+        }
+
+        return (await response.json()) as AnalysisResponse;
+      } catch (err) {
+        setError({
+          detail:
+            err instanceof Error ? err.message : "An unknown error occurred",
           status_code: 500,
         });
         return null;
@@ -97,6 +154,7 @@ export const useAnalysis = (): UseAnalysisHook => {
 
   return {
     analyzeDocument,
+    getAnalysisResult,
     isLoading,
     error,
     resetError,
