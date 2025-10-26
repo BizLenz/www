@@ -16,6 +16,7 @@ import { Step1Settings } from "./steps/step-1-settings";
 import { Step2Review } from "./steps/step-2-review";
 import { useAnalysis } from "@/hooks/use-analysis-hook";
 import { useFileStore } from "@/store/file-store";
+import { router } from "next/client";
 
 interface AnalysisButtonProps {
   fileId: number;
@@ -73,16 +74,16 @@ export function AnalysisButton({ fileId, onConfirm }: AnalysisButtonProps) {
       resetFile(fileId);
 
       const request = {
+        plan_id: file.id,
         file_path: file.file_path,
-        // TODO: update default after backend changes
         contest_type: settings.contestType ?? "예비창업패키지",
       };
 
       const result = await analyzeDocument(request);
 
       if (result) {
-        // TODO: move user to analysis result page
         toast.success(`'${file.file_name}' 분석을 완료했습니다.`);
+        await router.push(`/results/${file.id}`);
       }
 
       handleClose();

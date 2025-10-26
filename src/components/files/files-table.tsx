@@ -189,11 +189,11 @@ export function FilesTable({
       header: () => null,
       cell: ({ row }) => {
         const file = row.original;
-        const isCompleted = file.status === "completed";
+        const isCompleted = file.latest_job_id !== null;
 
         return (
-          <div className="flex gap-2 text-right">
-            {isCompleted ? (
+          <div className="flex justify-end gap-2 text-right">
+            {isCompleted && (
               <Button
                 variant="secondary"
                 size="sm"
@@ -204,9 +204,8 @@ export function FilesTable({
               >
                 결과확인
               </Button>
-            ) : (
-              <AnalysisButton fileId={file.id} />
             )}
+            <AnalysisButton fileId={file.id} />
             <Button
               variant="destructive"
               size="sm"
@@ -219,7 +218,7 @@ export function FilesTable({
           </div>
         );
       },
-      size: 120,
+      size: 200,
     },
   ];
 
