@@ -21,7 +21,6 @@ const GIGABYTE_IN_MEGABYTES = 1024;
 
 export default function Page() {
   const { data: session, status } = useSession();
-  const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
   const {
@@ -37,8 +36,6 @@ export default function Page() {
   } = useFileStoreShallow();
 
   useEffect(() => {
-    // TODO: add team fetches
-    setTeamName("test");
     setStorageUsage(size);
     if (
       lastFetchSuccessful === null &&
@@ -55,15 +52,10 @@ export default function Page() {
   return (
     <SidebarInset>
       <div className="flex flex-1 flex-col gap-4 p-10">
-        {/* Title */}
-        <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
-          {teamName}
-        </h1>
-        {/* SubTitle */}
-        <div className="flex justify-between">
-          <p className="text-muted-foreground text-xl">
+        <div className="flex items-end justify-between">
+          <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
             새로운 가능성을 분석해보세요.
-          </p>
+          </h1>
           <div className="flex flex-1 flex-row items-center justify-end gap-4">
             <p className="text-muted-foreground text-sm">사용중인 저장공간</p>
             {storageUsage ? (

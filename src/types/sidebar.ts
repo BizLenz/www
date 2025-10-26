@@ -6,12 +6,6 @@ export interface UserData {
   avatar?: string; // s3 link
 }
 
-export interface TeamData {
-  name: string;
-  logo: LucideIcon;
-  plan: string;
-}
-
 export interface NavMainItem {
   title: string;
   url: string;

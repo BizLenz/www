@@ -2,15 +2,14 @@
 
 import * as React from "react";
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
-// Static imports
 import { staticAppData } from "@/lib/app-sidebar-items";
-import type { TeamData, UserData } from "@/types/sidebar";
+import type { UserData } from "@/types/sidebar";
 
 import { NavMain } from "@/components/sidebar/nav-main";
 import { NavReports } from "@/components/sidebar/nav-reports";
 import { NavUser } from "@/components/sidebar/nav-user";
-import { TeamSwitcher } from "@/components/sidebar/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -33,11 +32,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [userData, setUserData] = useState<UserData | null>(null);
   const [isLoadingUserData, setIsLoadingUserData] = useState(false);
   const [userError, setUserError] = useState<string | null>(null);
-
-  // Team State
-  const [teamData, setTeamData] = useState<TeamData[] | null>(null);
-  const [isLoadingTeamData, setIsLoadingTeamData] = useState(false);
-  const [teamError, setTeamError] = useState<string | null>(null);
 
   useEffect(() => {
     if (
@@ -82,68 +76,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         }
       };
 
-      // --- DUMMY FETCH FOR DEVELOPMENT ---
-      // --- Fetch Team Data ---
-      const fetchTeamData = async () => {
-        if (isLoadingTeamData || teamData) return;
-
-        setIsLoadingTeamData(true);
-        setTeamError(null);
-
-        try {
-          // --- BEGIN MOCK TEAM DATA SIMULATION ---
-          // TODO: Replace with actual FastAPI team data fetch later
-          console.log(
-            "DashboardComponent: Simulating team data fetch with token:",
-            fastApiToken,
-          );
-          const dummyTeamData: TeamData[] = [
-            {
-              name: "Lorem Inc",
-              logo: GalleryVerticalEnd,
-              plan: "Enterprise",
-            },
-            {
-              name: "Ipsum Inc",
-              logo: GalleryVerticalEnd,
-              plan: "Enterprise",
-            },
-          ];
-
-          await new Promise((resolve) => setTimeout(resolve, 1200)); // Simulate latency
-          setTeamData(dummyTeamData);
-          // --- END MOCK TEAM DATA SIMULATION ---
-
-          /*
-                    // const res = await fetch("http://fastapi.url/api/teams", {
-                    //   headers: { Authorization: `Bearer ${fastApiToken}` },
-                    // });
-                    // if (!res.ok) throw new Error("Failed to fetch team data");
-                    // const realData = await res.json();
-                    // setTeamData(realData);
-                    */
-        } catch (err: unknown) {
-          const errorMessage = getErrorMessage(err);
-          setTeamError(errorMessage);
-          setTeamData(null);
-          if (isError(err))
-            console.error("Error loading team data:", err.message);
-          else console.error("Caught unexpected error loading team data:", err);
-        } finally {
-          setIsLoadingTeamData(false);
-        }
-      };
-
       void fetchUserData();
-      void fetchTeamData();
     }
   }, [
     sessionStatus,
     fastApiToken,
     isLoadingUserData,
     userData,
-    isLoadingTeamData,
-    teamData,
     session?.user?.name,
     session?.user?.email,
     session?.user?.image,
@@ -186,13 +125,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        {isLoadingTeamData ? (
-          <Skeleton className="h-10 w-full" />
-        ) : teamError ? (
-          <div style={{ color: "red", padding: "8px" }}>Error: {teamError}</div>
-        ) : (
-          <TeamSwitcher teams={teamData} />
-        )}
+        <div className="flex items-center gap-2 rounded-xl border p-2">
+          <Image
+            width={28}
+            height={28}
+            src="https://raw.githubusercontent.com/BizLenz/.github/refs/heads/main/assets/logo/logo_dark.svg"
+            alt="BizLenz Logo"
+          />
+          <div className="text-xl font-bold">BizLenz.</div>
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={staticAppData.navMain} />
