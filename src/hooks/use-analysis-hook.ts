@@ -112,8 +112,7 @@ export const useAnalysis = (): UseAnalysisHook => {
       }
 
       try {
-        // TODO: REMOVE def
-        const resultId = request.id || 16;
+        const resultId = request.id;
         const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/evaluation/results/${resultId}`;
 
         const response = await fetch(url, {

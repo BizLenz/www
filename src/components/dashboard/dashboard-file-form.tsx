@@ -74,7 +74,6 @@ export function DashboardFileForm({}) {
         console.log("File uploaded successfully:", result);
         toast.success("File uploaded successfully.");
         setFiles([]);
-        // TODO: make analysis-result call to backend
         router.push(`/files`);
       }
     } catch (error) {
