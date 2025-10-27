@@ -11,26 +11,31 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { useAnalyzeStore } from "@/store/analyze-store";
+import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 import { Step1Settings } from "./steps/step-1-settings";
 import { Step2Review } from "./steps/step-2-review";
+import { useAnalysis } from "@/hooks/use-analysis-hook";
+import { useFileStore } from "@/store/file-store";
 
 interface AnalysisButtonProps {
   fileId: number;
-  fileName: string;
   onConfirm?: (fileId: number) => Promise<void> | void;
 }
 
-export function AnalysisButton({
-  fileId,
-  fileName,
-  onConfirm,
-}: AnalysisButtonProps) {
+export function AnalysisButton({ fileId, onConfirm }: AnalysisButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<0 | 1>(0);
 
+  const fileStore = useFileStore();
+
+  const EMPTY_SETTINGS: FileSettings = {};
+
+  const settings = useAnalyzeStore((s) => s.files[fileId] ?? EMPTY_SETTINGS);
+
   const resetFile = useAnalyzeStore((s) => s.resetFile);
+
+  const { analyzeDocument, isLoading, error, resetError } = useAnalysis();
 
   const steps = [
     { title: "분석 옵션 설정", content: <Step1Settings fileId={fileId} /> },
@@ -42,21 +47,44 @@ export function AnalysisButton({
   const handleOpen = () => {
     setStep(0);
     setOpen(true);
+    resetError();
   };
 
   const handleClose = () => {
     setOpen(false);
     resetFile(fileId);
+    resetError();
   };
 
   const handleConfirm = async () => {
     try {
       setLoading(true);
       if (onConfirm) await onConfirm(fileId);
-      toast.success(`'${fileName}' 분석을 요청했습니다.`);
+
+      const file = fileStore.files.find((f) => f.id === fileId);
+
+      if (!file) {
+        toast.error("File not found.");
+        return;
+      }
+
+      toast.success(`'${file.file_name}' 분석을 요청했습니다.`);
 
       resetFile(fileId);
-      //TODO: make call to backend
+
+      const request = {
+        file_path: file.file_path,
+        // TODO: update default after backend changes
+        contest_type: settings.contestType ?? "예비창업패키지",
+      };
+
+      const result = await analyzeDocument(request);
+
+      if (result) {
+        // TODO: move user to analysis result page
+        toast.success(`'${file.file_name}' 분석을 완료했습니다.`);
+      }
+
       handleClose();
     } catch (error) {
       console.error(error);

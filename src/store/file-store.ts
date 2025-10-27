@@ -29,20 +29,23 @@ export const useFileStore = create<FileState>()((set, get) => ({
       return;
     }
 
-    if (!session || !session.user) {
+    if (!session?.user) {
       set({ error: "User session not available.", isLoading: false });
       return;
     }
 
     set({ isLoading: true, error: null, lastFetchSuccessful: null });
     try {
-      const response = await fetch("http://localhost:8000/files/search", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${session.accessToken}`,
-          "Content-Type": "application/json",
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/files/search`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${session.accessToken}`,
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -91,6 +94,8 @@ export const useFileStore = create<FileState>()((set, get) => ({
   },
 }));
 
+const BYTES_IN_MEGABYTE = 1_048_576;
+
 export const useFileStoreShallow = () =>
   useFileStore(
     useShallow((state: FileState) => ({
@@ -98,9 +103,9 @@ export const useFileStoreShallow = () =>
       size: Number(
         (
           state.files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
-          1_048_576
+          BYTES_IN_MEGABYTE
         ).toFixed(2),
-      ), // MiB
+      ),
       isLoading: state.isLoading,
       error: state.error,
       lastFetchSuccessful: state.lastFetchSuccessful,

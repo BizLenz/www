@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface FileSettings {
-  program?: string;
+  contestType?: string;
   analysisScope?: string[];
 }
 

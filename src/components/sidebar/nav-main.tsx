@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, Home, type LucideIcon } from "lucide-react";
+import { Check, ChevronRight, Home, type LucideIcon } from "lucide-react";
 
 import {
   Collapsible,
@@ -17,6 +17,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useAiModelStore } from "@/store/ai-model-store";
 
 export function NavMain({
   items,
@@ -29,9 +30,12 @@ export function NavMain({
     items?: {
       title: string;
       url?: string;
+      icon?: LucideIcon;
     }[];
   }[];
 }) {
+  const { aiModel, selectAiModel } = useAiModelStore();
+
   return (
     <SidebarGroup>
       <SidebarMenuItem>
@@ -63,11 +67,21 @@ export function NavMain({
                 <SidebarMenuSub>
                   {item.items?.map((subItem) => (
                     <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
+                      {subItem.url ? (
+                        <SidebarMenuSubButton asChild>
+                          <a href={subItem.url}>
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      ) : (
+                        <SidebarMenuSubButton
+                          onClick={() => selectAiModel(subItem.title)}
+                        >
+                          {aiModel === subItem.title && <Check />}
+                          {subItem.icon && <subItem.icon />}
                           <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
+                        </SidebarMenuSubButton>
+                      )}
                     </SidebarMenuSubItem>
                   ))}
                 </SidebarMenuSub>

@@ -17,6 +17,8 @@ import { DashboardRecentView } from "@/components/dashboard/dashboard-recent-vie
 import { useFileStoreShallow } from "@/store/file-store";
 import { useSession } from "next-auth/react";
 
+const GIGABYTE_IN_MEGABYTES = 1024;
+
 export default function Page() {
   const { data: session, status } = useSession();
   const [teamName, setTeamName] = useState<string>();
@@ -69,7 +71,10 @@ export default function Page() {
                 <small className="text-sm leading-none font-medium">
                   {storageUsage}MiB/1GiB
                 </small>
-                <Progress value={storageUsage / 10.24} className="w-[20%]" />
+                <Progress
+                  value={storageUsage / (GIGABYTE_IN_MEGABYTES / 100)}
+                  className="w-[20%]"
+                />
               </>
             ) : (
               <></>

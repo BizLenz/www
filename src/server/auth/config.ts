@@ -3,13 +3,13 @@ import { type JWT } from "next-auth/jwt";
 import Cognito from "next-auth/providers/cognito";
 
 interface CognitoTokenResponse {
-    access_token: string;
-    id_token: string;
-    refresh_token: string;
-    expires_in: number;
-    token_type: string;
-    scope: string;
-    error?: string;
+  access_token: string;
+  id_token: string;
+  refresh_token: string;
+  expires_in: number;
+  token_type: string;
+  scope: string;
+  error?: string;
 }
 
 /**
@@ -96,7 +96,7 @@ export const authConfig = {
         ).toString("base64");
 
         const response = await fetch(
-          `https://${process.env.AUTH_COGNITO_DOMAIN}.auth.ap-northeast.amazonaws.com/oauth2/token`,
+          `${process.env.AUTH_COGNITO_DOMAIN}/oauth2/token`,
           {
             method: "POST",
             headers: {
@@ -112,7 +112,7 @@ export const authConfig = {
           },
         );
 
-        const tokens = await response.json() as CognitoTokenResponse;
+        const tokens = (await response.json()) as CognitoTokenResponse;
 
         if (!response.ok) {
           console.error("Cognito token refresh failed:", tokens);

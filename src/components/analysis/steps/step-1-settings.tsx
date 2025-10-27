@@ -1,7 +1,7 @@
-import { type FileSettings, useAnalyzeStore } from "@/store/analyze-store";
+import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ProgramComboBox } from "@/components/analysis/program-combo-box";
+import { ContestTypeComboBox } from "@/components/analysis/contest-type-combo-box";
 import { useCallback } from "react";
 
 interface Step1SettingsProps {
@@ -23,28 +23,25 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
   const settings = useAnalyzeStore((s) => s.files[fileId] ?? EMPTY_SETTINGS);
   const setSettings = useAnalyzeStore((s) => s.setFileSettings);
 
-  const toggleScope = useCallback(
-    (scope: string, checked: boolean) => {
-      const current = settings.analysisScope ?? [];
-      if (checked) {
-        setSettings(fileId, { analysisScope: [...current, scope] });
-      } else {
-        setSettings(fileId, {
-          analysisScope: current.filter((s) => s !== scope),
-        });
-      }
-    },
-    [fileId, settings.analysisScope, setSettings],
-  );
+  const toggleScope = (scope: string, checked: boolean) => {
+    const current = settings.analysisScope ?? [];
+    if (checked) {
+      setSettings(fileId, { analysisScope: [...current, scope] });
+    } else {
+      setSettings(fileId, {
+        analysisScope: current.filter((s) => s !== scope),
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
       {/* 평가 양식 선택 */}
       <div className="space-y-2">
         <div className="text-lg font-semibold">평가 양식 선택</div>
-        <ProgramComboBox
-          value={settings.program ?? ""}
-          onChange={(value) => setSettings(fileId, { program: value })}
+        <ContestTypeComboBox
+          value={settings.contestType ?? ""}
+          onChange={(value) => setSettings(fileId, { contestType: value })}
         />
       </div>
 
