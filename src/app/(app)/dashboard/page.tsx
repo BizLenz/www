@@ -102,34 +102,29 @@ export default function Page() {
           </div>
         </div>
         {/* ROW 3; Notifications */}
-        {/* TODO: fetch from backend */}
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-between">
-            <div className="text-lg font-semibold">알림 및 공지</div>
-            <Button>모든 알림 보기</Button>
-          </div>
-          <Notification
-            icon={<Rocket />}
-            title={"Lorem Ipsum"}
-            body={
-              "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
-            }
-          />
-          <Notification
-            icon={<Rocket />}
-            title={"Lorem Ipsum"}
-            body={
-              "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
-            }
-          />
-          <Notification
-            icon={<Rocket />}
-            title={"Lorem Ipsum"}
-            body={
-              "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit"
-            }
-          />
+        <div className="flex justify-between">
+          <div className="text-lg font-semibold">알림 및 공지</div>
+          <Button>모든 알림 보기</Button>
         </div>
+        {files && files[0] ? (
+          <>
+            <Notification
+              icon={<Rocket />}
+              title="분석 완료"
+              body={`${files[0].file_name}의 분석을 완료하였습니다.`}
+            />
+            <Notification
+              icon={<Rocket />}
+              title="분석 완료"
+              body={`${files[0].file_name}의 분석을 완료하였습니다.`}
+            />
+            <Notification
+              icon={<Rocket />}
+              title="분석 실패"
+              body={`${files[0].file_name}의 분석이 실패하였습니다.`}
+            />
+          </>
+        ) : null}
       </div>
     </SidebarInset>
   );
