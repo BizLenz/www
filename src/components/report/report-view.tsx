@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  ScoreChart,
-  FeedbackCard,
-  EvaluationCriteriaCard,
-} from "@/components/report/report-components";
+import { ScoreChart } from "@/components/report/score-chart";
+import { FeedbackCard } from "@/components/report/feedback-card";
+import { EvaluationCriteriaCard } from "@/components/report/evaluation-criteria-card";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Lightbulb, ThumbsDown, ThumbsUp } from "lucide-react";
