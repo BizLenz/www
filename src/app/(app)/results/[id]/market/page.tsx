@@ -1,28 +1,17 @@
-import { SidebarInset } from "@/components/ui/sidebar";
 import MarketAnalysisView from "@/components/report/market-view";
-import {
-  MarketAnalysisSchema,
-  type MarketAnalysis,
-} from "@/types/analysis-detail-result";
-import { getMarketAnalysis as getResult } from "@/lib/get-result";
-import { auth } from "@/server/auth";
+import { MarketAnalysisSchema } from "@/types/analysis-detail-result";
+import { getMarketAnalysis } from "@/lib/get-result";
+import { resultPage } from "../result-page-layout";
 
 export default async function MarketAnalysisPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-  const session = await auth();
-  const result = await getResult(id, session);
-
-  // validate data
-  const parsedMarketAnalysis: MarketAnalysis =
-    MarketAnalysisSchema.parse(result);
-
-  return (
-    <SidebarInset>
-      <MarketAnalysisView data={parsedMarketAnalysis} />
-    </SidebarInset>
-  );
+  return resultPage({
+    params,
+    fetcher: getMarketAnalysis,
+    schema: MarketAnalysisSchema,
+    View: MarketAnalysisView,
+  });
 }
