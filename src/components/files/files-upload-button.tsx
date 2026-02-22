@@ -52,15 +52,11 @@ export function FilesUploadButton({
         toast.error("No file selected.");
         return;
       }
-      const result = await uploadFile(file);
-      if (result) {
-        console.log("File uploaded successfully:", result);
-      }
+      await uploadFile(file);
       setFiles(undefined);
       onRefetchFilesAction();
       toggleOpen();
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("업로드 요청 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
@@ -68,7 +64,6 @@ export function FilesUploadButton({
   };
 
   const handleDrop = (file: File[]) => {
-    console.log(file);
     setFiles(file);
   };
 
@@ -89,7 +84,7 @@ export function FilesUploadButton({
             maxSize={1024 * 1024 * 50} // 50MB
             minSize={1024}
             onDrop={handleDrop}
-            onError={console.error}
+            onError={() => toast.error("파일 처리 중 오류가 발생했습니다.")}
             src={files}
           >
             <DropzoneEmptyState />

@@ -74,20 +74,17 @@ export function AnalysisButton({ fileId, onConfirm }: AnalysisButtonProps) {
 
       const request = {
         file_path: file.file_path,
-        // TODO: update default after backend changes
         contest_type: settings.contestType ?? "예비창업패키지",
       };
 
       const result = await analyzeDocument(request);
 
       if (result) {
-        // TODO: move user to analysis result page
         toast.success(`'${file.file_name}' 분석을 완료했습니다.`);
       }
 
       handleClose();
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error("분석 요청 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);

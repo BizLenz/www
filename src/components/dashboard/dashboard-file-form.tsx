@@ -53,12 +53,10 @@ export function DashboardFileForm({}) {
   const router = useRouter();
 
   const handleDrop = (files: File[]) => {
-    console.log("Accepted files:", files);
     setFiles(files);
   };
 
-  async function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("Form submitted with data:", data);
+  async function onSubmit(_data: z.infer<typeof formSchema>) {
     try {
       if (files.length === 0) {
         toast.error("No file selected.");
@@ -71,14 +69,12 @@ export function DashboardFileForm({}) {
       }
       const result = await uploadFile(file);
       if (result) {
-        console.log("File uploaded successfully:", result);
         toast.success("File uploaded successfully.");
         setFiles([]);
-        // TODO: make analysis-result call to backend
         router.push(`/files`);
       }
-    } catch (error) {
-      console.error("File upload failed:", error);
+    } catch {
+      // Error already handled by useFileUpload hook
     }
   }
 
@@ -128,7 +124,7 @@ export function DashboardFileForm({}) {
           <Dropzone
             accept={{ "application/pdf": [] }}
             onDrop={handleDrop}
-            onError={console.error}
+            onError={() => toast.error("파일 처리 중 오류가 발생했습니다.")}
             src={files}
           >
             <DropzoneEmptyState />

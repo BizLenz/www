@@ -84,11 +84,9 @@ export const useAnalysis = (): UseAnalysisHook => {
       setError(null);
 
       try {
-        // TODO: REMOVE def
-        const resultId = request.id || 16;
         const { data, error: fetchError } =
           await authenticatedFetch<AnalysisResponse>(
-            API_ENDPOINTS.evaluation.results(resultId),
+            API_ENDPOINTS.evaluation.results(request.id),
             session?.accessToken,
           );
 

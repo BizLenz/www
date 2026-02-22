@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { GalleryVerticalEnd } from "lucide-react";
 import type { TeamData, UserData } from "@/types/sidebar";
 import { useBackendToken } from "@/hooks/use-backend-token";
-import { getErrorMessage, isError } from "@/lib/utils";
+import { getErrorMessage } from "@/lib/utils";
 
 interface SidebarData {
   userData: UserData | null;
@@ -60,12 +60,8 @@ export function useSidebarData(): SidebarData {
         await new Promise((resolve) => setTimeout(resolve, 800));
         setUserData(userData);
       } catch (err: unknown) {
-        const errorMessage = getErrorMessage(err);
-        setUserError(errorMessage);
+        setUserError(getErrorMessage(err));
         setUserData(null);
-        if (isError(err))
-          console.error("Error loading user data:", err.message);
-        else console.error("Caught unexpected error loading user data:", err);
       } finally {
         setIsLoadingUserData(false);
       }
@@ -79,7 +75,6 @@ export function useSidebarData(): SidebarData {
       setTeamError(null);
 
       try {
-        // TODO: Replace with actual FastAPI team data fetch later
         const dummyTeamData: TeamData[] = [
           {
             name: "Lorem Inc",
@@ -105,12 +100,8 @@ export function useSidebarData(): SidebarData {
         // setTeamData(realData);
         */
       } catch (err: unknown) {
-        const errorMessage = getErrorMessage(err);
-        setTeamError(errorMessage);
+        setTeamError(getErrorMessage(err));
         setTeamData(null);
-        if (isError(err))
-          console.error("Error loading team data:", err.message);
-        else console.error("Caught unexpected error loading team data:", err);
       } finally {
         setIsLoadingTeamData(false);
       }

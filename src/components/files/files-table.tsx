@@ -80,7 +80,6 @@ export function FilesTable({
         onRefetchFilesAction();
         handleCloseModal();
       } else {
-        console.error("File deletion failed:", result);
         toast.error("파일 삭제에 실패했습니다.");
       }
     }

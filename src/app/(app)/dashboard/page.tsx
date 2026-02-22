@@ -37,7 +37,6 @@ export default function Page() {
   } = useFileStoreShallow();
 
   useEffect(() => {
-    // TODO: add team fetches
     setTeamName("test");
     setStorageUsage(size);
     if (
