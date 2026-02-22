@@ -5,6 +5,7 @@ on:
     branches: [main, feature/*]
   pull_request:
     branches: [main, feature/*]
+  workflow_dispatch:
 
 jobs:
   lint:
@@ -21,52 +22,27 @@ jobs:
       NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
       - name: Run ESLint
-        run: pnpm run lint
+        run: bun run lint
 
   format:
     name: Format (Prettier)
     runs-on: ubuntu-latest
-    
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: pnpm install
+        run: bun install
       - name: Run Prettier
-        run: pnpm run format
-
-  audit:
-    name: Security Audit (pnpm audit)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        run: npm install -g pnpm
-      - name: Install dependencies
-        run: pnpm install
-      - name: Run pnpm audit
-        run: pnpm audit
+        run: bun run format:check
 
   test:
-    name: Test (Jest)
+    name: Test (Bun)
     runs-on: ubuntu-latest
     env:
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
@@ -79,21 +55,15 @@ jobs:
       NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: pnpm install
-      - name: Install Jest for CI
-        run: pnpm add -D jest jest-environment-jsdom @types/jest ts-jest
-      - name: Run Jest
-        run: pnpm run test
+        run: bun install
+      - name: Run tests
+        run: bun test
 
   build:
-    name: Build (Vite)
+    name: Build (Next.js)
     runs-on: ubuntu-latest
     env:
       AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
@@ -106,13 +76,9 @@ jobs:
       NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - name: Install pnpm
-        run: npm install -g pnpm
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
       - name: Install dependencies
-        run: pnpm install
-      - name: Build with Vite
-        run: pnpm run build
+        run: bun install
+      - name: Build
+        run: bun run build

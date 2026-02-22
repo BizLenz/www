@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useAiModelStore } from "@/store/ai-model-store";
+import { API_ENDPOINTS } from "@/config/api";
+import { authenticatedFetch, type ApiError } from "@/lib/api-client";
 
 interface AnalysisRequest {
   file_path: string;
@@ -18,11 +20,6 @@ interface AnalysisResponse {
 
 interface AnalysisResultRequest {
   id: number;
-}
-
-interface ApiError {
-  detail: string;
-  status_code: number;
 }
 
 interface UseAnalysisHook {
@@ -48,48 +45,30 @@ export const useAnalysis = (): UseAnalysisHook => {
       setIsLoading(true);
       setError(null);
 
-      if (!session?.accessToken) {
-        toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
-        setError({ detail: "Not authenticated.", status_code: 401 });
-        setIsLoading(false);
-        return null;
-      }
-
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/evaluation/request`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
+        const { data, error: fetchError } =
+          await authenticatedFetch<AnalysisResponse>(
+            API_ENDPOINTS.evaluation.request,
+            session?.accessToken,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                ...request,
+                timeout_sec: request.timeout_sec ?? 300,
+                analysis_model: aiModel,
+              }),
             },
-            body: JSON.stringify({
-              ...request,
-              timeout_sec: request.timeout_sec ?? 300, // Default 5 minutes
-              analysis_model: aiModel,
-            }),
-          },
-        );
+          );
 
-        if (!response.ok) {
-          const errorData = (await response.json()) as ApiError;
-          setError({
-            detail:
-              errorData.detail || `HTTP error! status: ${response.status}`,
-            status_code: response.status,
-          });
+        if (fetchError) {
+          if (fetchError.status_code === 401)
+            toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
+          setError(fetchError);
           return null;
         }
 
-        return (await response.json()) as AnalysisResponse;
-      } catch (err) {
-        setError({
-          detail:
-            err instanceof Error ? err.message : "An unknown error occurred",
-          status_code: 500,
-        });
-        return null;
+        return data;
       } finally {
         setIsLoading(false);
       }
@@ -104,48 +83,26 @@ export const useAnalysis = (): UseAnalysisHook => {
       setIsLoading(true);
       setError(null);
 
-      if (!session?.accessToken) {
-        toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
-        setError({ detail: "Not authenticated.", status_code: 401 });
-        setIsLoading(false);
-        return null;
-      }
-
       try {
-        // TODO: REMOVE def
-        const resultId = request.id || 16;
-        const url = `${process.env.NEXT_PUBLIC_API_BASE_URL}/evaluation/results/${resultId}`;
+        const { data, error: fetchError } =
+          await authenticatedFetch<AnalysisResponse>(
+            API_ENDPOINTS.evaluation.results(request.id),
+            session?.accessToken,
+          );
 
-        const response = await fetch(url, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${session.accessToken}`,
-          },
-        });
-
-        if (!response.ok) {
-          const errorData = (await response.json()) as ApiError;
-          setError({
-            detail:
-              errorData.detail || `HTTP error! status: ${response.status}`,
-            status_code: response.status,
-          });
+        if (fetchError) {
+          if (fetchError.status_code === 401)
+            toast.error("로그인 후에 파일을 업로드할 수 있습니다.");
+          setError(fetchError);
           return null;
         }
 
-        return (await response.json()) as AnalysisResponse;
-      } catch (err) {
-        setError({
-          detail:
-            err instanceof Error ? err.message : "An unknown error occurred",
-          status_code: 500,
-        });
-        return null;
+        return data;
       } finally {
         setIsLoading(false);
       }
     },
-    [session, aiModel],
+    [session],
   );
 
   const resetError = useCallback(() => {

@@ -56,7 +56,7 @@ export function PathBreadcrumb() {
         </BreadcrumbItem>
 
         {/* Generated items */}
-        {pathItems.map((item, index) => (
+        {pathItems.map((item) => (
           <React.Fragment key={item.path}>
             <BreadcrumbSeparator />
             <BreadcrumbItem>

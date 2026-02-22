@@ -20,7 +20,7 @@ import { useSession } from "next-auth/react";
 const GIGABYTE_IN_MEGABYTES = 1024;
 
 export default function Page() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
@@ -28,7 +28,6 @@ export default function Page() {
     files,
     size,
     isLoading,
-    error,
     lastFetchSuccessful,
     fetchFiles,
     sumFilesNum,
@@ -37,7 +36,6 @@ export default function Page() {
   } = useFileStoreShallow();
 
   useEffect(() => {
-    // TODO: add team fetches
     setTeamName("test");
     setStorageUsage(size);
     if (
@@ -48,7 +46,7 @@ export default function Page() {
     ) {
       void fetchFiles(session);
     }
-  }, [files.length, isLoading, fetchFiles]);
+  }, [files.length, isLoading, fetchFiles, lastFetchSuccessful, session, size]);
 
   const recentActivityData = files.slice(0, 5);
 

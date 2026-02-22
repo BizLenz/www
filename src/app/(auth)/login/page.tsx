@@ -12,28 +12,19 @@ export default function LoginPage() {
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
   useEffect(() => {
-    if (error) {
-      console.error("Login Error:", error);
-    }
-
     if (status === "loading") {
       return;
     }
 
     if (session) {
-      console.log("User already signed in, redirecting to:", callbackUrl);
       router.push(callbackUrl);
       return;
     }
 
     if (!session && !error) {
-      console.log("No session found, initiating sign-in to Cognito...");
-      if (!session && !error) {
-        console.log("No session found, initiating sign-in to Cognito...");
-        signIn("cognito", { callbackUrl: callbackUrl }).catch((err) => {
-          console.error("Error during sign in:", err);
-        });
-      }
+      signIn("cognito", { callbackUrl: callbackUrl }).catch(() => {
+        // signIn failures redirect to error param
+      });
     }
   }, [session, status, error, router, callbackUrl]);
 

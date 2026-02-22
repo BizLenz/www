@@ -7,12 +7,13 @@ import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
 import { useSession } from "next-auth/react";
+import { ErrorBoundary } from "@/components/common/error-boundary";
 
 export default function Files() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, size, isLoading, error, lastFetchSuccessful, fetchFiles } =
+  const { files, size, isLoading, lastFetchSuccessful, fetchFiles } =
     useFileStoreShallow();
 
   const memoizedRefetchFiles = useCallback(() => {
@@ -31,7 +32,7 @@ export default function Files() {
     ) {
       void fetchFiles(session);
     }
-  }, [size, files.length, isLoading, session, fetchFiles]);
+  }, [size, files.length, isLoading, session, fetchFiles, lastFetchSuccessful]);
 
   return (
     <SidebarInset>
@@ -57,10 +58,12 @@ export default function Files() {
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
-          <FilesTable
-            data={files}
-            onRefetchFilesAction={memoizedRefetchFiles}
-          />
+          <ErrorBoundary>
+            <FilesTable
+              data={files}
+              onRefetchFilesAction={memoizedRefetchFiles}
+            />
+          </ErrorBoundary>
         </div>
       </div>
     </SidebarInset>

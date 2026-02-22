@@ -1,5 +1,5 @@
 import { type DefaultSession, type NextAuthConfig } from "next-auth";
-import { type JWT } from "next-auth/jwt";
+import "next-auth/jwt";
 import Cognito from "next-auth/providers/cognito";
 
 interface CognitoTokenResponse {
@@ -70,7 +70,7 @@ export const authConfig = {
      */
   ],
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, account }) {
       if (account) {
         return {
           ...token,
