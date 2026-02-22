@@ -22,7 +22,9 @@ describe("useBackendToken", () => {
       fastApiToken: "test-token",
       isLoadingFastApiToken: false,
       errorFastApiToken: null,
-      refreshFastApiToken: async () => { /* noop */ },
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
     };
 
     const { result } = renderHook(() => useBackendToken(), {
@@ -45,7 +47,9 @@ describe("useBackendToken", () => {
       fastApiToken: null,
       isLoadingFastApiToken: true,
       errorFastApiToken: null,
-      refreshFastApiToken: async () => { /* noop */ },
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
     };
 
     const { result } = renderHook(() => useBackendToken(), {
@@ -61,7 +65,9 @@ describe("useBackendToken", () => {
       fastApiToken: null,
       isLoadingFastApiToken: false,
       errorFastApiToken: "Token fetch failed",
-      refreshFastApiToken: async () => { /* noop */ },
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
     };
 
     const { result } = renderHook(() => useBackendToken(), {

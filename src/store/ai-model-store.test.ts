@@ -54,14 +54,18 @@ describe("useAiModelStore", () => {
     });
 
     it("keeps current model when invalid model is selected", () => {
-      const warnSpy = spyOn(console, "warn").mockImplementation(() => { /* noop */ });
+      const warnSpy = spyOn(console, "warn").mockImplementation(() => {
+        /* noop */
+      });
       useAiModelStore.getState().selectAiModel("invalid-model");
       expect(useAiModelStore.getState().aiModel).toBe("gemini-2.5-flash");
       warnSpy.mockRestore();
     });
 
     it("warns on invalid model selection", () => {
-      const warnSpy = spyOn(console, "warn").mockImplementation(() => { /* noop */ });
+      const warnSpy = spyOn(console, "warn").mockImplementation(() => {
+        /* noop */
+      });
       useAiModelStore.getState().selectAiModel("invalid-model");
       expect(warnSpy).toHaveBeenCalledTimes(1);
       warnSpy.mockRestore();

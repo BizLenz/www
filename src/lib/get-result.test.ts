@@ -81,7 +81,9 @@ describe("getResult", () => {
   it("passes undefined token when session is null", async () => {
     mockServerFetch.mockResolvedValueOnce(makeAnalysisResult());
 
-    await getResult("123", null).catch(() => { /* expected */ });
+    await getResult("123", null).catch(() => {
+      /* expected */
+    });
 
     expect(mockServerFetch.mock.calls[0]![1]).toBeUndefined();
   });
