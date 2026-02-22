@@ -5,8 +5,8 @@ import { renderHook, act } from "@testing-library/react";
 const mockAuthenticatedFetch = mock<(...args: any[]) => Promise<any>>();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockFetch = mock<(...args: any[]) => Promise<Response>>(
-  () => Promise.resolve(new Response(null, { status: 200 })),
+const mockFetch = mock<(...args: any[]) => Promise<Response>>(() =>
+  Promise.resolve(new Response(null, { status: 200 })),
 );
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
