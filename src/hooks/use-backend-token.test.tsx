@@ -10,8 +10,10 @@ function wrapper(value: {
   errorFastApiToken: string | null;
   refreshFastApiToken: () => Promise<void>;
 }) {
-  return ({ children }: { children: ReactNode }) =>
+  const Wrapper = ({ children }: { children: ReactNode }) =>
     createElement(BackendTokenContext.Provider, { value }, children);
+  Wrapper.displayName = "BackendTokenWrapper";
+  return Wrapper;
 }
 
 describe("useBackendToken", () => {
@@ -20,7 +22,7 @@ describe("useBackendToken", () => {
       fastApiToken: "test-token",
       isLoadingFastApiToken: false,
       errorFastApiToken: null,
-      refreshFastApiToken: async () => {},
+      refreshFastApiToken: async () => { /* noop */ },
     };
 
     const { result } = renderHook(() => useBackendToken(), {
@@ -43,7 +45,7 @@ describe("useBackendToken", () => {
       fastApiToken: null,
       isLoadingFastApiToken: true,
       errorFastApiToken: null,
-      refreshFastApiToken: async () => {},
+      refreshFastApiToken: async () => { /* noop */ },
     };
 
     const { result } = renderHook(() => useBackendToken(), {
@@ -59,7 +61,7 @@ describe("useBackendToken", () => {
       fastApiToken: null,
       isLoadingFastApiToken: false,
       errorFastApiToken: "Token fetch failed",
-      refreshFastApiToken: async () => {},
+      refreshFastApiToken: async () => { /* noop */ },
     };
 
     const { result } = renderHook(() => useBackendToken(), {

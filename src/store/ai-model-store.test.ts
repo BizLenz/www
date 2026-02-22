@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, spyOn, mock } from "bun:test";
 import { create } from "zustand";
 
 // Re-register the real module to override any mocks from other test files
-mock.module("@/store/ai-model-store", () => {
+void mock.module("@/store/ai-model-store", () => {
   const store = create<{
     aiModel: string;
     aiModelList: string[];
@@ -54,14 +54,14 @@ describe("useAiModelStore", () => {
     });
 
     it("keeps current model when invalid model is selected", () => {
-      const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = spyOn(console, "warn").mockImplementation(() => { /* noop */ });
       useAiModelStore.getState().selectAiModel("invalid-model");
       expect(useAiModelStore.getState().aiModel).toBe("gemini-2.5-flash");
       warnSpy.mockRestore();
     });
 
     it("warns on invalid model selection", () => {
-      const warnSpy = spyOn(console, "warn").mockImplementation(() => {});
+      const warnSpy = spyOn(console, "warn").mockImplementation(() => { /* noop */ });
       useAiModelStore.getState().selectAiModel("invalid-model");
       expect(warnSpy).toHaveBeenCalledTimes(1);
       warnSpy.mockRestore();

@@ -4,7 +4,7 @@ import type { Session } from "next-auth";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockAuthenticatedFetch = mock<(...args: any[]) => Promise<any>>();
 
-mock.module("@/lib/api-client", () => ({
+void mock.module("@/lib/api-client", () => ({
   authenticatedFetch: mockAuthenticatedFetch,
   serverFetch: mock(),
 }));

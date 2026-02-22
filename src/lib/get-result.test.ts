@@ -5,7 +5,7 @@ import type { AnalysisResult } from "@/types/analysis-result";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockServerFetch = mock<(...args: any[]) => Promise<any>>();
 
-mock.module("@/lib/api-client", () => ({
+void mock.module("@/lib/api-client", () => ({
   serverFetch: mockServerFetch,
   authenticatedFetch: mock(),
 }));
@@ -81,7 +81,7 @@ describe("getResult", () => {
   it("passes undefined token when session is null", async () => {
     mockServerFetch.mockResolvedValueOnce(makeAnalysisResult());
 
-    await getResult("123", null).catch(() => {});
+    await getResult("123", null).catch(() => { /* expected */ });
 
     expect(mockServerFetch.mock.calls[0]![1]).toBeUndefined();
   });
@@ -98,7 +98,7 @@ describe("getResult", () => {
   it("propagates serverFetch errors", async () => {
     mockServerFetch.mockRejectedValueOnce(new Error("Not found"));
 
-    await expect(getResult("999", makeSession())).rejects.toThrow("Not found");
+    expect(getResult("999", makeSession())).rejects.toThrow("Not found");
   });
 });
 
@@ -202,7 +202,7 @@ describe("getTechnicalAnalysis", () => {
       new Error("Request failed with status 500"),
     );
 
-    await expect(getTechnicalAnalysis("42", makeSession())).rejects.toThrow(
+    expect(getTechnicalAnalysis("42", makeSession())).rejects.toThrow(
       "Request failed with status 500",
     );
   });

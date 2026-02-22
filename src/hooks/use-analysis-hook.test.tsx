@@ -14,20 +14,20 @@ const mockUseSession = mock<() => any>(() => ({
   status: "authenticated",
 }));
 
-mock.module("next-auth/react", () => ({
+void mock.module("next-auth/react", () => ({
   useSession: mockUseSession,
 }));
 
-mock.module("@/lib/api-client", () => ({
+void mock.module("@/lib/api-client", () => ({
   authenticatedFetch: mockAuthenticatedFetch,
   serverFetch: mock(),
 }));
 
-mock.module("sonner", () => ({
+void mock.module("sonner", () => ({
   toast: { error: mock(), success: mock() },
 }));
 
-mock.module("@/store/ai-model-store", () => ({
+void mock.module("@/store/ai-model-store", () => ({
   useAiModelStore: () => ({ aiModel: "gemini-2.5-flash" }),
 }));
 
