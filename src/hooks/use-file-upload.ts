@@ -2,6 +2,8 @@ import { useState, useCallback } from "react";
 import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
+import { API_ENDPOINTS } from "@/config/api";
+import { authenticatedFetch } from "@/lib/api-client";
 
 interface FileUploadOptions {
   description?: string;
@@ -31,10 +33,6 @@ interface MetadataSaveResponse {
   file_id: number;
 }
 
-interface FileUploadErrorResponse {
-  detail: string;
-}
-
 export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
   const { data: session } = useSession();
   const [loading, setLoading] = useState(false);
@@ -42,7 +40,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
 
   const uploadFile = useCallback(
     async (file: File): Promise<FileUploadResult | undefined> => {
-      setError(null); // Clear previous errors
+      setError(null);
       setLoading(true);
 
       if (!session?.accessToken) {
@@ -59,7 +57,6 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         return;
       }
 
-      // File validation
       if (!file.name.toLowerCase().endsWith(".pdf")) {
         toast.error("PDF 파일만 업로드 가능합니다.");
         setError("Only PDF files are allowed.");
@@ -74,96 +71,78 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
       }
 
       try {
-        // Get Presigned URL from Backend
-        const presignedUrlResponse = await fetch(
-          process.env.NEXT_PUBLIC_API_BASE_URL + "/files/upload",
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
+        // Step 1: Get presigned URL from backend
+        const { data: presigned, error: presignedError } =
+          await authenticatedFetch<PresignedUrlResponse>(
+            API_ENDPOINTS.files.upload,
+            session.accessToken,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                user_id: session.user?.id,
+                file_name: file.name,
+                mime_type: file.type,
+                file_size: file.size,
+                description:
+                  options?.description ?? "Uploaded via useFileUpload",
+              }),
             },
-            body: JSON.stringify({
-              user_id: session.user?.id,
-              file_name: file.name,
-              mime_type: file.type,
-              file_size: file.size,
-              description: options?.description ?? "Uploaded via useFileUpload",
-            }),
-          },
-        );
+          );
 
-        if (!presignedUrlResponse.ok) {
-          const errorData =
-            (await presignedUrlResponse.json()) as FileUploadErrorResponse;
-          console.error("Backend Error Details:", errorData);
-          const errorMessage =
-            errorData.detail ??
-            `Failed to get presigned URL: ${presignedUrlResponse.status}`;
-          throw new Error(errorMessage);
-        }
+        if (presignedError || !presigned)
+          throw new Error(
+            presignedError?.detail ?? "Failed to get presigned URL",
+          );
 
-        const { presigned_url, file_url, key } =
-          (await presignedUrlResponse.json()) as PresignedUrlResponse;
-        console.log("Presigned URL received. Uploading to S3...");
-
-        // Upload the file directly to S3
-        const s3UploadResponse = await fetch(presigned_url, {
+        // Step 2: Upload file directly to S3
+        const s3UploadResponse = await fetch(presigned.presigned_url, {
           method: "PUT",
-          headers: {
-            "Content-Type": file.type,
-          },
+          headers: { "Content-Type": file.type },
           body: file,
         });
 
-        if (!s3UploadResponse.ok) {
+        if (!s3UploadResponse.ok)
           throw new Error(
             `Failed to upload file to S3: ${s3UploadResponse.statusText}`,
           );
-        }
 
-        console.log("File successfully uploaded to S3. Saving metadata...");
-
-        // Notify Backend to save file metadata
-        const metadataSaveResponse = await fetch(
-          process.env.NEXT_PUBLIC_API_BASE_URL + "/files/upload/metadata", // Use env var
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${session.accessToken}`,
-              "Content-Type": "application/json",
+        // Step 3: Notify backend to save file metadata
+        const { data: metadataResult, error: metadataError } =
+          await authenticatedFetch<MetadataSaveResponse>(
+            API_ENDPOINTS.files.uploadMetadata,
+            session.accessToken,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                user_id: session.user?.id,
+                file_name: file.name,
+                mime_type: file.type,
+                key: presigned.key,
+                file_url: presigned.file_url,
+                size: file.size,
+                file_size: file.size,
+                s3_key: presigned.key,
+                s3_file_url: presigned.file_url,
+                description:
+                  options?.description ?? "Uploaded via useFileUpload",
+              }),
             },
-            body: JSON.stringify({
-              user_id: session.user?.id,
-              file_name: file.name,
-              mime_type: file.type,
-              key: key,
-              file_url: file_url,
-              size: file.size,
-              file_size: file.size,
-              s3_key: key,
-              s3_file_url: file_url,
-              description: options?.description ?? "Uploaded via useFileUpload",
-            }),
-          },
+          );
+
+        if (metadataError || !metadataResult)
+          throw new Error(
+            metadataError?.detail ?? "Failed to save file metadata",
+          );
+
+        toast.success(
+          `Upload successful! File ID: ${metadataResult.file_id}.`,
         );
-
-        if (!metadataSaveResponse.ok) {
-          const errorData =
-            (await metadataSaveResponse.json()) as FileUploadErrorResponse;
-          const errorMessage =
-            errorData.detail ??
-            `Failed to save file metadata: ${metadataSaveResponse.status}`;
-          throw new Error(errorMessage);
-        }
-
-        const metadataResult =
-          (await metadataSaveResponse.json()) as MetadataSaveResponse;
-        toast.success(`Upload successful! File ID: ${metadataResult.file_id}.`);
         return {
           fileId: metadataResult.file_id,
-          fileUrl: file_url,
-          s3Key: key,
+          fileUrl: presigned.file_url,
+          s3Key: presigned.key,
         };
       } catch (err: unknown) {
         const errorMessage = getErrorMessage(err);
