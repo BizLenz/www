@@ -22,18 +22,27 @@ Frontend for BizLenz.
 
 ### Usage
 
-`pnpm` is expected to run this app. See [here](https://pnpm.io/installation) for installation.
+`bun` is expected to run this app. See [here](https://bun.sh/docs/installation)
+for installation.
 
 ```bash
-pnpm dev # Run the app in development mode
-pnpm start # Run the app in production mode
-pnpm build # Build the app
+bun dev # Run the app in development mode
+bun start # Run the app in production mode
+bun run build # Build the app
 ```
+
+> `flake.nix` is provided for Nix users. Use `nix develop` to enter the
+> development shell.
 
 ### System Architecture
 
 <img src="https://raw.githubusercontent.com/BizLenz/.github/refs/heads/main/assets/architecture/www_architecture.svg" alt="www_architecture" width="600"/>
 
-The frontend was developed using the Next.js framework as it enables server‑side rendering, optimized performance, and efficient integration of dynamic AI‑driven content.
+The frontend was developed using the Next.js framework as it enables server‑side
+rendering, optimized performance, and efficient integration of dynamic AI‑driven
+content.
 
-It heavily utilizes the [shadcn/ui](https://ui.shadcn.com/) component library, allowing rapid interface development and maintaining consistent design efficiency even with a single developer on the FE side.
+It heavily utilizes the [shadcn/ui](https://ui.shadcn.com/) component library,
+allowing rapid interface development and maintaining consistent design
+efficiency even with a single developer on the FE side.
+
