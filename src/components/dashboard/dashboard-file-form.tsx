@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { router } from "next/client";
+
 import {
   Dropzone,
   DropzoneContent,
@@ -47,7 +47,7 @@ export function DashboardFileForm({}) {
   });
 
   const [files, setFiles] = useState<File[]>([]);
-  const { uploadFile, loading, error, reset } = useFileUpload({
+  const { uploadFile } = useFileUpload({
     description: "User uploaded document",
   });
   const router = useRouter();

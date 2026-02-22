@@ -24,7 +24,7 @@ export const BackendTokenContext = createContext<
 >(undefined);
 
 export function BackendTokenProvider({ children }: { children: ReactNode }) {
-  const { data: session, status: sessionStatus } = useSession();
+  const { status: sessionStatus } = useSession();
   const [fastApiToken, setFastApiToken] = useState<string | null>(null);
   const [isLoadingFastApiToken, setIsLoadingFastApiToken] = useState(false);
   const [errorFastApiToken, setErrorFastApiToken] = useState<string | null>(

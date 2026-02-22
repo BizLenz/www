@@ -16,22 +16,20 @@ import {
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/shadcn-io/dropzone";
-import type { Session } from "next-auth";
+
 import { useFileUpload } from "@/hooks/use-file-upload";
 
 interface FilesUploadButtonProps {
-  session: Session | null;
   onRefetchFilesAction: () => void;
 }
 
 export function FilesUploadButton({
-  session,
   onRefetchFilesAction,
 }: FilesUploadButtonProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState<File[] | undefined>();
-  const { uploadFile, error, reset } = useFileUpload({
+  const { uploadFile } = useFileUpload({
     description: "User uploaded document",
   });
 

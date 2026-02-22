@@ -10,10 +10,10 @@ import { useSession } from "next-auth/react";
 import { ErrorBoundary } from "@/components/common/error-boundary";
 
 export default function Files() {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, size, isLoading, error, lastFetchSuccessful, fetchFiles } =
+  const { files, size, isLoading, lastFetchSuccessful, fetchFiles } =
     useFileStoreShallow();
 
   const memoizedRefetchFiles = useCallback(() => {
@@ -32,7 +32,7 @@ export default function Files() {
     ) {
       void fetchFiles(session);
     }
-  }, [size, files.length, isLoading, session, fetchFiles]);
+  }, [size, files.length, isLoading, session, fetchFiles, lastFetchSuccessful]);
 
   return (
     <SidebarInset>

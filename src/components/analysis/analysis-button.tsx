@@ -35,7 +35,7 @@ export function AnalysisButton({ fileId, onConfirm }: AnalysisButtonProps) {
 
   const resetFile = useAnalyzeStore((s) => s.resetFile);
 
-  const { analyzeDocument, isLoading, error, resetError } = useAnalysis();
+  const { analyzeDocument, resetError } = useAnalysis();
 
   const steps = [
     { title: "분석 옵션 설정", content: <Step1Settings fileId={fileId} /> },

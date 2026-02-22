@@ -26,7 +26,7 @@ import {
 import type { File } from "@/types/file";
 import { useRouter } from "next/navigation";
 import { FilesUploadButton } from "@/components/files/files-upload-button";
-import { useSession } from "next-auth/react";
+
 import { DeleteConfirmationModal } from "@/components/common/delete-confirmation-modal";
 import { useFileDelete } from "@/hooks/use-delete-file";
 import { createFileColumns } from "@/components/files/files-table-columns";
@@ -38,7 +38,7 @@ export function FilesTable({
   data: File[];
   onRefetchFilesAction: () => void;
 }) {
-  const { data: session } = useSession();
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -130,7 +130,6 @@ export function FilesTable({
           className="max-w-sm"
         />
         <FilesUploadButton
-          session={session}
           onRefetchFilesAction={onRefetchFilesAction}
         />
       </div>

@@ -2,7 +2,7 @@ import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContestTypeComboBox } from "@/components/analysis/contest-type-combo-box";
-import { useCallback } from "react";
+
 
 interface Step1SettingsProps {
   fileId: number;

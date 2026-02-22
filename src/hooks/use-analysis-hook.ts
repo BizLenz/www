@@ -102,7 +102,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         setIsLoading(false);
       }
     },
-    [session, aiModel],
+    [session],
   );
 
   const resetError = useCallback(() => {
