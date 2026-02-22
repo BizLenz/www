@@ -18,7 +18,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 interface FinancialAnalysisViewProps {
   data: FinancialAnalysis;
 }

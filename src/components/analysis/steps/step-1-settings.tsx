@@ -3,7 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContestTypeComboBox } from "@/components/analysis/contest-type-combo-box";
 
-
 interface Step1SettingsProps {
   fileId: number;
 }

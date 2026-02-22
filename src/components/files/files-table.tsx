@@ -38,7 +38,6 @@ export function FilesTable({
   data: File[];
   onRefetchFilesAction: () => void;
 }) {
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -129,9 +128,7 @@ export function FilesTable({
           onChange={(event) => setGlobalFilter(event.target.value)}
           className="max-w-sm"
         />
-        <FilesUploadButton
-          onRefetchFilesAction={onRefetchFilesAction}
-        />
+        <FilesUploadButton onRefetchFilesAction={onRefetchFilesAction} />
       </div>
       <div className="rounded-md border">
         <Table className="table-fixed">

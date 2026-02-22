@@ -19,7 +19,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-
 interface MarketAnalysisViewProps {
   data: MarketAnalysis;
 }
