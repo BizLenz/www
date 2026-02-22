@@ -7,6 +7,7 @@ import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
 import { useSession } from "next-auth/react";
+import { ErrorBoundary } from "@/components/common/error-boundary";
 
 export default function Files() {
   const { data: session, status } = useSession();
@@ -57,10 +58,12 @@ export default function Files() {
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
-          <FilesTable
-            data={files}
-            onRefetchFilesAction={memoizedRefetchFiles}
-          />
+          <ErrorBoundary>
+            <FilesTable
+              data={files}
+              onRefetchFilesAction={memoizedRefetchFiles}
+            />
+          </ErrorBoundary>
         </div>
       </div>
     </SidebarInset>
