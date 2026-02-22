@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  type ColumnDef,
   type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
@@ -15,7 +14,6 @@ import {
 } from "@tanstack/react-table";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -25,14 +23,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import StatusBubble from "@/components/common/status-bubble";
 import type { File } from "@/types/file";
-import { AnalysisButton } from "@/components/analysis/analysis-button";
 import { useRouter } from "next/navigation";
 import { FilesUploadButton } from "@/components/files/files-upload-button";
 import { useSession } from "next-auth/react";
 import { DeleteConfirmationModal } from "@/components/common/delete-confirmation-modal";
 import { useFileDelete } from "@/hooks/use-delete-file";
+import { createFileColumns } from "@/components/files/files-table-columns";
 
 export function FilesTable({
   data,
@@ -41,7 +38,7 @@ export function FilesTable({
   data: File[];
   onRefetchFilesAction: () => void;
 }) {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -62,7 +59,7 @@ export function FilesTable({
   });
 
   const router = useRouter();
-  const { mutate: deleteFile, isPending: isDeleting } = useFileDelete();
+  const { mutate: deleteFile } = useFileDelete();
 
   const handleDeleteClick = (fileId: number, fileName: string) => {
     setDeleteModal({
@@ -93,135 +90,10 @@ export function FilesTable({
     setDeleteModal({ isOpen: false, fileId: undefined, fileName: undefined });
   };
 
-  const columns: ColumnDef<File>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllRowsSelected() ||
-            (table.getIsSomeRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-      size: 40,
-    },
-    {
-      accessorKey: "file_name",
-      header: "파일 이름",
-      size: 300,
-      cell: ({ row }) => {
-        const fileName = row.getValue("file_name");
-        if (typeof fileName !== "string" || !fileName)
-          throw new Error("File name is required");
-        // limit to 120 characters with ellipsis
-        const truncatedName =
-          fileName.length > 120 ? `${fileName.slice(0, 120)}...` : fileName;
-
-        return (
-          <div className="max-w-[200px] truncate font-medium" title={fileName}>
-            {truncatedName}
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: "created_at",
-      header: "업로드 날짜",
-      size: 250,
-      cell: ({ row }) => {
-        const createdAtValue = row.getValue<string | undefined | null>(
-          "created_at",
-        );
-        let formattedDate = "";
-
-        // only proceed if createdAtValue is not null or undefined
-        if (createdAtValue) {
-          try {
-            const date = new Date(createdAtValue);
-
-            if (!isNaN(date.getTime())) {
-              formattedDate = new Intl.DateTimeFormat("ko-KR", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                second: "2-digit",
-                hour12: false,
-              }).format(date);
-            } else {
-              formattedDate = "유효하지 않은 날짜";
-            }
-          } catch (error) {
-            console.error("Error formatting date:", error);
-            formattedDate = "날짜 형식 오류";
-          }
-        } else {
-          formattedDate = "날짜 정보 없음";
-        }
-
-        return <div className="font-medium">{formattedDate}</div>;
-      },
-    },
-    {
-      accessorKey: "status",
-      header: "상태",
-      size: 120,
-      cell: ({ row }) => {
-        const status = row.getValue<File["status"]>("status");
-        return <StatusBubble status={status} />;
-      },
-    },
-    {
-      id: "actions",
-      header: () => null,
-      cell: ({ row }) => {
-        const file = row.original;
-        const isCompleted = file.status === "completed";
-
-        return (
-          <div className="flex gap-2 text-right">
-            {isCompleted ? (
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => {
-                  toast.info(`'${file.file_name}'의 결과 페이지로 이동합니다.`);
-                  router.push(`/results/${file.id}`);
-                }}
-              >
-                결과확인
-              </Button>
-            ) : (
-              <AnalysisButton fileId={file.id} />
-            )}
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={() => handleDeleteClick(file.id, file.file_name)}
-              // disabled={isDeleting}
-            >
-              {/*{isDeleting ? "삭제중..." : "삭제"}*/}
-              삭제
-            </Button>
-          </div>
-        );
-      },
-      size: 120,
-    },
-  ];
+  const columns = createFileColumns({
+    router,
+    onDeleteClick: handleDeleteClick,
+  });
 
   const table = useReactTable({
     data,
