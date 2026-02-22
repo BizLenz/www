@@ -13,8 +13,7 @@ export const API_ENDPOINTS = {
       `${API_BASE_URL}/evaluation/results/${id}`,
     financial: (id: string) =>
       `${API_BASE_URL}/evaluation/results/financial/${id}`,
-    market: (id: string) =>
-      `${API_BASE_URL}/evaluation/results/market/${id}`,
+    market: (id: string) => `${API_BASE_URL}/evaluation/results/market/${id}`,
     risk: (id: string) => `${API_BASE_URL}/evaluation/results/risk/${id}`,
     technical: (id: string) =>
       `${API_BASE_URL}/evaluation/results/technical/${id}`,

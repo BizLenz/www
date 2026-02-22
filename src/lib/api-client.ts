@@ -32,8 +32,7 @@ export async function authenticatedFetch<T>(
       return {
         data: null,
         error: {
-          detail:
-            errorData.detail ?? `HTTP error! status: ${response.status}`,
+          detail: errorData.detail ?? `HTTP error! status: ${response.status}`,
           status_code: response.status,
         },
       };

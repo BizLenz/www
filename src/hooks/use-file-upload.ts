@@ -145,8 +145,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
 
       const token = session!.accessToken!;
       const userId = session!.user?.id;
-      const description =
-        options?.description ?? "Uploaded via useFileUpload";
+      const description = options?.description ?? "Uploaded via useFileUpload";
 
       try {
         const presigned = await getPresignedUrl(
@@ -164,9 +163,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
           description,
         );
 
-        toast.success(
-          `Upload successful! File ID: ${metadata.file_id}.`,
-        );
+        toast.success(`Upload successful! File ID: ${metadata.file_id}.`);
         return {
           fileId: metadata.file_id,
           fileUrl: presigned.file_url,

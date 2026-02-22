@@ -61,8 +61,7 @@ export const useFileDelete = (options?: FileDeleteOptions): UseFileDelete => {
 
         if (fetchError || !deleteResult)
           throw new Error(
-            fetchError?.detail ??
-              `파일 삭제 실패: ${targetFileId}`,
+            fetchError?.detail ?? `파일 삭제 실패: ${targetFileId}`,
           );
 
         if (deleteResult.success) {
