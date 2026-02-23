@@ -208,9 +208,3 @@ fabric.properties
 
 # local PostgreSQL data
 .pg
-
-# sst
-.sst
-
-# open-next
-.open-next

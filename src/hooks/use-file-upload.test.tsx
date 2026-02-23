@@ -43,7 +43,7 @@ void mock.module("sonner", () => ({
   toast: { error: mock(), success: mock() },
 }));
 
-// Override global fetch for S3 upload
+// Override global fetch for storage upload
 globalThis.fetch = mockFetch as unknown as typeof fetch;
 
 const { useFileUpload } = await import("./use-file-upload");
@@ -142,7 +142,7 @@ describe("useFileUpload", () => {
         error: null,
       });
 
-      // 2. uploadToS3 (uses global fetch)
+      // 2. uploadToStorage (uses global fetch)
       mockFetch.mockResolvedValueOnce(new Response(null, { status: 200 }));
 
       // 3. saveFileMetadata
@@ -161,7 +161,7 @@ describe("useFileUpload", () => {
       expect(uploadResult).toEqual({
         fileId: 42,
         fileUrl: "https://s3.example.com/file.pdf",
-        s3Key: "uploads/file.pdf",
+        storageKey: "uploads/file.pdf",
       });
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
@@ -186,7 +186,7 @@ describe("useFileUpload", () => {
       expect(result.current.error).toBe("Server error");
     });
 
-    it("handles S3 upload failure", async () => {
+    it("handles storage upload failure", async () => {
       mockAuthenticatedFetch.mockResolvedValueOnce({
         data: {
           presigned_url: "https://s3.example.com/upload",
@@ -208,7 +208,9 @@ describe("useFileUpload", () => {
       });
 
       expect(uploadResult).toBeUndefined();
-      expect(result.current.error).toContain("Failed to upload file to S3");
+      expect(result.current.error).toContain(
+        "Failed to upload file to storage",
+      );
     });
 
     it("handles metadata save failure", async () => {

@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 export interface UserData {
   name: string;
   email: string;
-  avatar?: string; // s3 link
+  avatar?: string;
 }
 
 export interface TeamData {

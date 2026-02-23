@@ -13,7 +13,7 @@ interface FileUploadOptions {
 interface FileUploadResult {
   fileId: number;
   fileUrl: string;
-  s3Key: string;
+  storageKey: string;
 }
 
 interface UseFileUpload {
@@ -82,7 +82,10 @@ async function getPresignedUrl(
   return data;
 }
 
-async function uploadToS3(presignedUrl: string, file: File): Promise<void> {
+async function uploadToStorage(
+  presignedUrl: string,
+  file: File,
+): Promise<void> {
   const response = await fetch(presignedUrl, {
     method: "PUT",
     headers: { "Content-Type": file.type },
@@ -90,7 +93,7 @@ async function uploadToS3(presignedUrl: string, file: File): Promise<void> {
   });
 
   if (!response.ok)
-    throw new Error(`Failed to upload file to S3: ${response.statusText}`);
+    throw new Error(`Failed to upload file to storage: ${response.statusText}`);
 }
 
 async function saveFileMetadata(
@@ -114,8 +117,8 @@ async function saveFileMetadata(
         file_url: presigned.file_url,
         size: file.size,
         file_size: file.size,
-        s3_key: presigned.key,
-        s3_file_url: presigned.file_url,
+        storage_key: presigned.key,
+        storage_file_url: presigned.file_url,
         description,
       }),
     },
@@ -156,7 +159,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
           userId,
           description,
         );
-        await uploadToS3(presigned.presigned_url, file);
+        await uploadToStorage(presigned.presigned_url, file);
         const metadata = await saveFileMetadata(
           token,
           file,
@@ -169,7 +172,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         return {
           fileId: metadata.file_id,
           fileUrl: presigned.file_url,
-          s3Key: presigned.key,
+          storageKey: presigned.key,
         };
       } catch (err: unknown) {
         const errorMessage = getErrorMessage(err);
