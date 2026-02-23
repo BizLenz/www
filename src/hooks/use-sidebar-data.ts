@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { GalleryVerticalEnd } from "lucide-react";
 import type { TeamData, UserData } from "@/types/sidebar";
 import { useBackendToken } from "@/hooks/use-backend-token";
@@ -19,7 +19,7 @@ interface SidebarData {
 }
 
 export function useSidebarData(): SidebarData {
-  const { data: session, status: sessionStatus } = useSession();
+  const session = authClient.useSession();
   const { fastApiToken, isLoadingFastApiToken, errorFastApiToken } =
     useBackendToken();
 
@@ -34,6 +34,13 @@ export function useSidebarData(): SidebarData {
   const isTokenReady =
     !isLoadingFastApiToken && !errorFastApiToken && !!fastApiToken;
 
+  const sessionStatus: "loading" | "authenticated" | "unauthenticated" =
+    session.isPending
+      ? "loading"
+      : session.data
+        ? "authenticated"
+        : "unauthenticated";
+
   useEffect(() => {
     if (sessionStatus !== "authenticated" || !isTokenReady) return;
 
@@ -43,18 +50,18 @@ export function useSidebarData(): SidebarData {
       setIsLoadingUserData(true);
       setUserError(null);
 
-      if (!session?.user?.name) {
+      if (!session.data?.user?.name) {
         throw new Error("User name is missing");
       }
-      if (!session?.user?.email) {
+      if (!session.data?.user?.email) {
         throw new Error("User email is missing");
       }
 
       try {
         const userData: UserData = {
-          name: session.user.name,
-          email: session.user.email,
-          avatar: session.user.image ?? "",
+          name: session.data.user.name,
+          email: session.data.user.email,
+          avatar: session.data.user.image ?? "",
         };
 
         await new Promise((resolve) => setTimeout(resolve, 800));
@@ -90,15 +97,6 @@ export function useSidebarData(): SidebarData {
 
         await new Promise((resolve) => setTimeout(resolve, 1200));
         setTeamData(dummyTeamData);
-
-        /*
-        // const res = await fetch("http://fastapi.url/api/teams", {
-        //   headers: { Authorization: `Bearer ${fastApiToken}` },
-        // });
-        // if (!res.ok) throw new Error("Failed to fetch team data");
-        // const realData = await res.json();
-        // setTeamData(realData);
-        */
       } catch (err: unknown) {
         setTeamError(getErrorMessage(err));
         setTeamData(null);
@@ -116,9 +114,9 @@ export function useSidebarData(): SidebarData {
     userData,
     isLoadingTeamData,
     teamData,
-    session?.user?.name,
-    session?.user?.email,
-    session?.user?.image,
+    session.data?.user?.name,
+    session.data?.user?.email,
+    session.data?.user?.image,
   ]);
 
   return {

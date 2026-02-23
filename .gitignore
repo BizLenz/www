@@ -206,8 +206,5 @@ fabric.properties
 
 # End of https://www.toptal.com/developers/gitignore/api/nextjs,webstorm,macos,linux
 
-# sst
-.sst
-
-# open-next
-.open-next
+# local PostgreSQL data
+.pg

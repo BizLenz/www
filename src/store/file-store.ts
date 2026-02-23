@@ -3,7 +3,6 @@ import { type File, fileSchema } from "@/types/file";
 import { z } from "zod";
 import { useShallow } from "zustand/shallow";
 import { getErrorMessage } from "@/lib/utils";
-import { type Session } from "next-auth";
 import { API_ENDPOINTS } from "@/config/api";
 import { authenticatedFetch } from "@/lib/api-client";
 
@@ -12,7 +11,7 @@ export interface FileState {
   isLoading: boolean;
   error: string | null;
   lastFetchSuccessful: boolean | null;
-  fetchFiles: (session: Session) => Promise<void>;
+  fetchFiles: (token: string) => Promise<void>;
 }
 
 export interface FileResponse {
@@ -25,11 +24,11 @@ export const useFileStore = create<FileState>()((set, get) => ({
   isLoading: false,
   error: null,
   lastFetchSuccessful: null,
-  fetchFiles: async (session: Session) => {
+  fetchFiles: async (token: string) => {
     if (get().isLoading) return;
 
-    if (!session?.user) {
-      set({ error: "User session not available.", isLoading: false });
+    if (!token) {
+      set({ error: "Not authenticated.", isLoading: false });
       return;
     }
 
@@ -37,7 +36,7 @@ export const useFileStore = create<FileState>()((set, get) => ({
     try {
       const { data, error } = await authenticatedFetch<FileResponse>(
         API_ENDPOINTS.files.search,
-        session.accessToken,
+        token,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },

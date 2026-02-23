@@ -1,8 +1,19 @@
 import { describe, it, expect } from "bun:test";
 import { renderHook } from "@testing-library/react";
-import { createElement, type ReactNode } from "react";
-import { BackendTokenContext } from "@/lib/auth-context";
-import { useBackendToken } from "./use-backend-token";
+import { createElement, useContext, type ReactNode } from "react";
+import { BackendTokenContext } from "@/lib/backend-token-context";
+
+// Test the context pattern directly to avoid bun mock.module leaking
+// from other test files that mock @/hooks/use-backend-token
+function useBackendTokenDirect() {
+  const context = useContext(BackendTokenContext);
+  if (context === undefined) {
+    throw new Error(
+      "useBackendToken must be used within a BackendTokenProvider",
+    );
+  }
+  return context;
+}
 
 function wrapper(value: {
   fastApiToken: string | null;
@@ -27,7 +38,7 @@ describe("useBackendToken", () => {
       },
     };
 
-    const { result } = renderHook(() => useBackendToken(), {
+    const { result } = renderHook(() => useBackendTokenDirect(), {
       wrapper: wrapper(contextValue),
     });
 
@@ -38,7 +49,7 @@ describe("useBackendToken", () => {
 
   it("throws when used outside provider", () => {
     expect(() => {
-      renderHook(() => useBackendToken());
+      renderHook(() => useBackendTokenDirect());
     }).toThrow("useBackendToken must be used within a BackendTokenProvider");
   });
 
@@ -52,7 +63,7 @@ describe("useBackendToken", () => {
       },
     };
 
-    const { result } = renderHook(() => useBackendToken(), {
+    const { result } = renderHook(() => useBackendTokenDirect(), {
       wrapper: wrapper(contextValue),
     });
 
@@ -70,7 +81,7 @@ describe("useBackendToken", () => {
       },
     };
 
-    const { result } = renderHook(() => useBackendToken(), {
+    const { result } = renderHook(() => useBackendTokenDirect(), {
       wrapper: wrapper(contextValue),
     });
 

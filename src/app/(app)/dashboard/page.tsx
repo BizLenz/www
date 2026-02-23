@@ -15,12 +15,12 @@ import Notification from "@/components/notification";
 import { DashboardFileForm } from "@/components/dashboard/dashboard-file-form";
 import { DashboardRecentView } from "@/components/dashboard/dashboard-recent-view";
 import { useFileStoreShallow } from "@/store/file-store";
-import { useSession } from "next-auth/react";
+import { useBackendToken } from "@/hooks/use-backend-token";
 
 const GIGABYTE_IN_MEGABYTES = 1024;
 
 export default function Page() {
-  const { data: session } = useSession();
+  const { fastApiToken } = useBackendToken();
   const [teamName, setTeamName] = useState<string>();
   const [storageUsage, setStorageUsage] = useState<number>();
 
@@ -42,11 +42,18 @@ export default function Page() {
       lastFetchSuccessful === null &&
       files.length === 0 &&
       !isLoading &&
-      session
+      fastApiToken
     ) {
-      void fetchFiles(session);
+      void fetchFiles(fastApiToken);
     }
-  }, [files.length, isLoading, fetchFiles, lastFetchSuccessful, session, size]);
+  }, [
+    files.length,
+    isLoading,
+    fetchFiles,
+    lastFetchSuccessful,
+    fastApiToken,
+    size,
+  ]);
 
   const recentActivityData = files.slice(0, 5);
 

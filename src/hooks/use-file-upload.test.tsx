@@ -9,18 +9,29 @@ const mockFetch = mock<(...args: any[]) => Promise<Response>>(() =>
   Promise.resolve(new Response(null, { status: 200 })),
 );
 
+const mockUseBackendToken = mock(() => ({
+  fastApiToken: "test-token" as string | null,
+  isLoadingFastApiToken: false,
+  errorFastApiToken: null as string | null,
+  refreshFastApiToken: async () => {
+    /* noop */
+  },
+}));
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockUseSession = mock<() => any>(() => ({
   data: {
-    user: { id: "user-1" },
-    accessToken: "test-token",
-    expires: "2099-01-01",
+    user: { id: "user-1", name: "Test", email: "test@test.com" },
   },
-  status: "authenticated",
+  isPending: false,
 }));
 
-void mock.module("next-auth/react", () => ({
-  useSession: mockUseSession,
+void mock.module("@/lib/auth-client", () => ({
+  authClient: { useSession: mockUseSession },
+}));
+
+void mock.module("@/hooks/use-backend-token", () => ({
+  useBackendToken: mockUseBackendToken,
 }));
 
 void mock.module("@/lib/api-client", () => ({
@@ -32,7 +43,7 @@ void mock.module("sonner", () => ({
   toast: { error: mock(), success: mock() },
 }));
 
-// Override global fetch for S3 upload
+// Override global fetch for storage upload
 globalThis.fetch = mockFetch as unknown as typeof fetch;
 
 const { useFileUpload } = await import("./use-file-upload");
@@ -46,13 +57,19 @@ describe("useFileUpload", () => {
     mockAuthenticatedFetch.mockReset();
     mockFetch.mockReset();
     mockFetch.mockResolvedValue(new Response(null, { status: 200 }));
+    mockUseBackendToken.mockReturnValue({
+      fastApiToken: "test-token",
+      isLoadingFastApiToken: false,
+      errorFastApiToken: null,
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
+    });
     mockUseSession.mockReturnValue({
       data: {
-        user: { id: "user-1" },
-        accessToken: "test-token",
-        expires: "2099-01-01",
+        user: { id: "user-1", name: "Test", email: "test@test.com" },
       },
-      status: "authenticated",
+      isPending: false,
     });
   });
 
@@ -64,9 +81,13 @@ describe("useFileUpload", () => {
 
   describe("validation", () => {
     it("rejects when not authenticated", async () => {
-      mockUseSession.mockReturnValue({
-        data: null,
-        status: "unauthenticated",
+      mockUseBackendToken.mockReturnValue({
+        fastApiToken: null,
+        isLoadingFastApiToken: false,
+        errorFastApiToken: null,
+        refreshFastApiToken: async () => {
+          /* noop */
+        },
       });
 
       const { result } = renderHook(() => useFileUpload());
@@ -121,7 +142,7 @@ describe("useFileUpload", () => {
         error: null,
       });
 
-      // 2. uploadToS3 (uses global fetch)
+      // 2. uploadToStorage (uses global fetch)
       mockFetch.mockResolvedValueOnce(new Response(null, { status: 200 }));
 
       // 3. saveFileMetadata
@@ -140,7 +161,7 @@ describe("useFileUpload", () => {
       expect(uploadResult).toEqual({
         fileId: 42,
         fileUrl: "https://s3.example.com/file.pdf",
-        s3Key: "uploads/file.pdf",
+        storageKey: "uploads/file.pdf",
       });
       expect(result.current.loading).toBe(false);
       expect(result.current.error).toBeNull();
@@ -165,7 +186,7 @@ describe("useFileUpload", () => {
       expect(result.current.error).toBe("Server error");
     });
 
-    it("handles S3 upload failure", async () => {
+    it("handles storage upload failure", async () => {
       mockAuthenticatedFetch.mockResolvedValueOnce({
         data: {
           presigned_url: "https://s3.example.com/upload",
@@ -187,7 +208,9 @@ describe("useFileUpload", () => {
       });
 
       expect(uploadResult).toBeUndefined();
-      expect(result.current.error).toContain("Failed to upload file to S3");
+      expect(result.current.error).toContain(
+        "Failed to upload file to storage",
+      );
     });
 
     it("handles metadata save failure", async () => {
@@ -221,9 +244,13 @@ describe("useFileUpload", () => {
 
   describe("reset", () => {
     it("clears loading and error", async () => {
-      mockUseSession.mockReturnValue({
-        data: null,
-        status: "unauthenticated",
+      mockUseBackendToken.mockReturnValue({
+        fastApiToken: null,
+        isLoadingFastApiToken: false,
+        errorFastApiToken: null,
+        refreshFastApiToken: async () => {
+          /* noop */
+        },
       });
 
       const { result } = renderHook(() => useFileUpload());

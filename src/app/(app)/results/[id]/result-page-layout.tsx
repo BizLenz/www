@@ -1,7 +1,7 @@
-import type { Session } from "next-auth";
 import type { ZodSchema } from "zod";
 import { SidebarInset } from "@/components/ui/sidebar";
-import { auth } from "@/server/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export async function resultPage<TRaw, TParsed>({
   params,
@@ -10,13 +10,16 @@ export async function resultPage<TRaw, TParsed>({
   View,
 }: {
   params: Promise<{ id: string }>;
-  fetcher: (id: string, session: Session | null) => Promise<TRaw>;
+  fetcher: (id: string, token: string | undefined) => Promise<TRaw>;
   schema: ZodSchema<TParsed>;
   View: React.ComponentType<{ data: TParsed }>;
 }) {
   const { id } = await params;
-  const session = await auth();
-  const raw = await fetcher(id, session);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  const token = session?.session?.token;
+  const raw = await fetcher(id, token);
   const data = schema.parse(raw);
 
   return (

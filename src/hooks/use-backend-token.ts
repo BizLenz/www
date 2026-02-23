@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { BackendTokenContext } from "@/lib/auth-context";
+import { BackendTokenContext } from "@/lib/backend-token-context";
 
 export function useBackendToken() {
   const context = useContext(BackendTokenContext);

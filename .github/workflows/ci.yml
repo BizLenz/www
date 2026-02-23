@@ -7,19 +7,14 @@ on:
     branches: [main, feature/*]
   workflow_dispatch:
 
+env:
+  SKIP_ENV_VALIDATION: true
+  NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
+
 jobs:
   lint:
     name: Lint (ESLint)
     runs-on: ubuntu-latest
-    env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      AUTH_COGNITO_CLIENT_ID: ${{ secrets.AUTH_COGNITO_CLIENT_ID }}
-      AUTH_COGNITO_CLIENT_SECRET: ${{ secrets.AUTH_COGNITO_CLIENT_SECRET }}
-      AUTH_COGNITO_DOMAIN: ${{ secrets.AUTH_COGNITO_DOMAIN }}
-      AUTH_COGNITO_ISSUER: ${{ secrets.AUTH_COGNITO_ISSUER }}
-      NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID }}
-      NEXT_PUBLIC_AUTH_COGNITO_DOMAIN: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_DOMAIN }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Bun
@@ -44,15 +39,6 @@ jobs:
   test:
     name: Test (Bun)
     runs-on: ubuntu-latest
-    env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      AUTH_COGNITO_CLIENT_ID: ${{ secrets.AUTH_COGNITO_CLIENT_ID }}
-      AUTH_COGNITO_CLIENT_SECRET: ${{ secrets.AUTH_COGNITO_CLIENT_SECRET }}
-      AUTH_COGNITO_DOMAIN: ${{ secrets.AUTH_COGNITO_DOMAIN }}
-      AUTH_COGNITO_ISSUER: ${{ secrets.AUTH_COGNITO_ISSUER }}
-      NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID }}
-      NEXT_PUBLIC_AUTH_COGNITO_DOMAIN: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_DOMAIN }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Bun
@@ -65,15 +51,6 @@ jobs:
   build:
     name: Build (Next.js)
     runs-on: ubuntu-latest
-    env:
-      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
-      AUTH_COGNITO_CLIENT_ID: ${{ secrets.AUTH_COGNITO_CLIENT_ID }}
-      AUTH_COGNITO_CLIENT_SECRET: ${{ secrets.AUTH_COGNITO_CLIENT_SECRET }}
-      AUTH_COGNITO_DOMAIN: ${{ secrets.AUTH_COGNITO_DOMAIN }}
-      AUTH_COGNITO_ISSUER: ${{ secrets.AUTH_COGNITO_ISSUER }}
-      NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID }}
-      NEXT_PUBLIC_AUTH_COGNITO_DOMAIN: ${{ secrets.NEXT_PUBLIC_AUTH_COGNITO_DOMAIN }}
-      NEXT_PUBLIC_API_BASE_URL: ${{ secrets.NEXT_PUBLIC_API_BASE_URL }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Bun

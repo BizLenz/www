@@ -1,32 +1,68 @@
 "use client";
 
-import { useEffect } from "react";
-import { signIn, useSession } from "next-auth/react";
+import { Suspense, useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function LoginPage() {
-  const { data: session, status } = useSession();
+  return (
+    <Suspense fallback={<LoginSkeleton />}>
+      <LoginContent />
+    </Suspense>
+  );
+}
+
+function LoginSkeleton() {
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        fontSize: "1.2em",
+      }}
+    >
+      <p>Checking authentication status...</p>
+    </div>
+  );
+}
+
+function LoginContent() {
+  const session = authClient.useSession();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const error = searchParams.get("error");
+  const errorParam = searchParams.get("error");
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const [signInError, setSignInError] = useState<string | null>(errorParam);
 
   useEffect(() => {
-    if (status === "loading") {
+    if (session.isPending) {
       return;
     }
 
-    if (session) {
+    if (session.data) {
       router.push(callbackUrl);
       return;
     }
 
-    if (!session && !error) {
-      signIn("cognito", { callbackUrl: callbackUrl }).catch(() => {
-        // signIn failures redirect to error param
-      });
+    if (!session.data && !signInError) {
+      void authClient.signIn
+        .social({
+          provider: "google",
+          callbackURL: callbackUrl,
+        })
+        .then(({ error }) => {
+          if (error) {
+            setSignInError(error.message ?? "Sign-in failed");
+          }
+        });
     }
-  }, [session, status, error, router, callbackUrl]);
+  }, [session.data, session.isPending, signInError, router, callbackUrl]);
+
+  const handleRetry = () => {
+    setSignInError(null);
+  };
 
   return (
     <div
@@ -38,21 +74,18 @@ export default function LoginPage() {
         fontSize: "1.2em",
         flexDirection: "column",
         textAlign: "center",
+        gap: "1rem",
       }}
     >
-      {status === "loading" && <p>Checking authentication status...</p>}
-      {status === "unauthenticated" && !error && (
-        <p>Redirecting to login with Cognito...</p>
+      {session.isPending && <p>Checking authentication status...</p>}
+      {!session.isPending && !session.data && !signInError && (
+        <p>Redirecting to login with Google...</p>
       )}
-      {error && (
+      {signInError && (
         <>
           <p style={{ color: "red" }}>Login failed:</p>
-          <p>{error}</p>
-          <button
-            onClick={() => signIn("cognito", { callbackUrl: callbackUrl })}
-          >
-            Try logging in again
-          </button>
+          <p>{signInError}</p>
+          <button onClick={handleRetry}>Try logging in again</button>
         </>
       )}
     </div>
