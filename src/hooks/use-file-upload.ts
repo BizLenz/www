@@ -1,9 +1,10 @@
 import { useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import { API_ENDPOINTS } from "@/config/api";
 import { authenticatedFetch } from "@/lib/api-client";
+import { useBackendToken } from "@/hooks/use-backend-token";
+import { authClient } from "@/lib/auth-client";
 
 interface FileUploadOptions {
   description?: string;
@@ -35,7 +36,7 @@ interface MetadataSaveResponse {
 
 function validatePdfFile(
   file: File | null,
-  accessToken: string | undefined,
+  accessToken: string | undefined | null,
 ): string | null {
   if (!accessToken) return "Not authenticated.";
   if (!file) return "No file selected.";
@@ -126,7 +127,8 @@ async function saveFileMetadata(
 }
 
 export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
-  const { data: session } = useSession();
+  const session = authClient.useSession();
+  const { fastApiToken } = useBackendToken();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -135,7 +137,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
       setError(null);
       setLoading(true);
 
-      const validationError = validatePdfFile(file, session?.accessToken);
+      const validationError = validatePdfFile(file, fastApiToken);
       if (validationError) {
         toast.error(VALIDATION_TOASTS[validationError] ?? validationError);
         setError(validationError);
@@ -143,8 +145,8 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         return;
       }
 
-      const token = session!.accessToken!;
-      const userId = session!.user?.id;
+      const token = fastApiToken!;
+      const userId = session.data?.user?.id;
       const description = options?.description ?? "Uploaded via useFileUpload";
 
       try {
@@ -178,7 +180,7 @@ export const useFileUpload = (options?: FileUploadOptions): UseFileUpload => {
         setLoading(false);
       }
     },
-    [session, options?.description],
+    [session.data, fastApiToken, options?.description],
   );
 
   const reset = useCallback(() => {

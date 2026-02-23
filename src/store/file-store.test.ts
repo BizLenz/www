@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, mock } from "bun:test";
-import type { Session } from "next-auth";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockAuthenticatedFetch = mock<(...args: any[]) => Promise<any>>();
@@ -10,15 +9,6 @@ void mock.module("@/lib/api-client", () => ({
 }));
 
 const { useFileStore } = await import("./file-store");
-
-function makeSession(overrides?: Partial<Session>): Session {
-  return {
-    user: { id: "user-1", name: "Test", email: "test@test.com" },
-    accessToken: "test-token",
-    expires: "2099-01-01",
-    ...overrides,
-  } as Session;
-}
 
 describe("useFileStore", () => {
   beforeEach(() => {
@@ -40,13 +30,11 @@ describe("useFileStore", () => {
   });
 
   describe("fetchFiles", () => {
-    it("sets error when session has no user", async () => {
-      await useFileStore
-        .getState()
-        .fetchFiles({ expires: "2099-01-01" } as Session);
+    it("sets error when token is empty", async () => {
+      await useFileStore.getState().fetchFiles("");
 
       const state = useFileStore.getState();
-      expect(state.error).toBe("User session not available.");
+      expect(state.error).toBe("Not authenticated.");
       expect(state.isLoading).toBe(false);
     });
 
@@ -59,7 +47,7 @@ describe("useFileStore", () => {
           }),
       );
 
-      const fetchPromise = useFileStore.getState().fetchFiles(makeSession());
+      const fetchPromise = useFileStore.getState().fetchFiles("test-token");
 
       expect(useFileStore.getState().isLoading).toBe(true);
 
@@ -83,7 +71,7 @@ describe("useFileStore", () => {
         error: null,
       });
 
-      await useFileStore.getState().fetchFiles(makeSession());
+      await useFileStore.getState().fetchFiles("test-token");
 
       const state = useFileStore.getState();
       expect(state.files).toHaveLength(2);
@@ -98,7 +86,7 @@ describe("useFileStore", () => {
         error: null,
       });
 
-      await useFileStore.getState().fetchFiles(makeSession());
+      await useFileStore.getState().fetchFiles("test-token");
 
       const state = useFileStore.getState();
       expect(state.error).toBe("Failed to fetch files: API reported failure.");
@@ -111,7 +99,7 @@ describe("useFileStore", () => {
         error: { detail: "Server error", status_code: 500 },
       });
 
-      await useFileStore.getState().fetchFiles(makeSession());
+      await useFileStore.getState().fetchFiles("test-token");
 
       const state = useFileStore.getState();
       expect(state.error).toContain("Server error");
@@ -127,10 +115,9 @@ describe("useFileStore", () => {
           }),
       );
 
-      const session = makeSession();
-      const first = useFileStore.getState().fetchFiles(session);
+      const first = useFileStore.getState().fetchFiles("test-token");
       // Second call while first is loading — should bail out
-      const second = useFileStore.getState().fetchFiles(session);
+      const second = useFileStore.getState().fetchFiles("test-token");
 
       resolveFirst({
         data: { success: true, results: [] },
@@ -148,7 +135,7 @@ describe("useFileStore", () => {
         new Error("Network failure"),
       );
 
-      await useFileStore.getState().fetchFiles(makeSession());
+      await useFileStore.getState().fetchFiles("test-token");
 
       const state = useFileStore.getState();
       expect(state.error).toContain("Network failure");

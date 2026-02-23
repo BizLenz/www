@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/utils";
 import { API_ENDPOINTS } from "@/config/api";
 import { authenticatedFetch } from "@/lib/api-client";
+import { useBackendToken } from "@/hooks/use-backend-token";
 
 interface FileDeleteOptions {
   file_id?: number;
@@ -23,7 +23,7 @@ interface UseFileDelete {
 }
 
 export const useFileDelete = (options?: FileDeleteOptions): UseFileDelete => {
-  const { data: session } = useSession();
+  const { fastApiToken } = useBackendToken();
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,7 +34,7 @@ export const useFileDelete = (options?: FileDeleteOptions): UseFileDelete => {
 
       const targetFileId = file_id ?? options?.file_id;
 
-      if (!session?.accessToken) {
+      if (!fastApiToken) {
         toast.error("로그인 후에 파일을 삭제할 수 있습니다.");
         setError("Not authenticated.");
         setIsPending(false);
@@ -52,7 +52,7 @@ export const useFileDelete = (options?: FileDeleteOptions): UseFileDelete => {
         const { data: deleteResult, error: fetchError } =
           await authenticatedFetch<FileDeleteResult>(
             API_ENDPOINTS.files.delete(targetFileId),
-            session.accessToken,
+            fastApiToken,
             {
               method: "DELETE",
               headers: { "Content-Type": "application/json" },
@@ -82,7 +82,7 @@ export const useFileDelete = (options?: FileDeleteOptions): UseFileDelete => {
         setIsPending(false);
       }
     },
-    [session, options?.file_id],
+    [fastApiToken, options?.file_id],
   );
 
   const reset = useCallback(() => {

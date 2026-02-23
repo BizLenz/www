@@ -1,9 +1,9 @@
 import { useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { toast } from "sonner";
 import { useAiModelStore } from "@/store/ai-model-store";
 import { API_ENDPOINTS } from "@/config/api";
 import { authenticatedFetch, type ApiError } from "@/lib/api-client";
+import { useBackendToken } from "@/hooks/use-backend-token";
 
 interface AnalysisRequest {
   file_path: string;
@@ -35,7 +35,7 @@ interface UseAnalysisHook {
 }
 
 export const useAnalysis = (): UseAnalysisHook => {
-  const { data: session } = useSession();
+  const { fastApiToken } = useBackendToken();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
   const { aiModel } = useAiModelStore();
@@ -49,7 +49,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         const { data, error: fetchError } =
           await authenticatedFetch<AnalysisResponse>(
             API_ENDPOINTS.evaluation.request,
-            session?.accessToken,
+            fastApiToken ?? undefined,
             {
               method: "POST",
               headers: { "Content-Type": "application/json" },
@@ -73,7 +73,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         setIsLoading(false);
       }
     },
-    [session, aiModel],
+    [fastApiToken, aiModel],
   );
 
   const getAnalysisResult = useCallback(
@@ -87,7 +87,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         const { data, error: fetchError } =
           await authenticatedFetch<AnalysisResponse>(
             API_ENDPOINTS.evaluation.results(request.id),
-            session?.accessToken,
+            fastApiToken ?? undefined,
           );
 
         if (fetchError) {
@@ -102,7 +102,7 @@ export const useAnalysis = (): UseAnalysisHook => {
         setIsLoading(false);
       }
     },
-    [session],
+    [fastApiToken],
   );
 
   const resetError = useCallback(() => {

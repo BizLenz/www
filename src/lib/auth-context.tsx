@@ -1,30 +1,16 @@
 "use client";
 
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { useSession } from "next-auth/react";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
 
 import { z } from "zod";
-import { type BackendTokenResponse, backendTokenSchema } from "@/types/auth"; // Adjust path
+import { type BackendTokenResponse, backendTokenSchema } from "@/types/auth";
+import { BackendTokenContext } from "@/lib/backend-token-context";
 
-interface BackendTokenContextType {
-  fastApiToken: string | null;
-  isLoadingFastApiToken: boolean;
-  errorFastApiToken: string | null;
-  refreshFastApiToken: () => Promise<void>;
-}
-
-export const BackendTokenContext = createContext<
-  BackendTokenContextType | undefined
->(undefined);
+export { BackendTokenContext } from "@/lib/backend-token-context";
 
 export function BackendTokenProvider({ children }: { children: ReactNode }) {
-  const { status: sessionStatus } = useSession();
+  const session = authClient.useSession();
   const [fastApiToken, setFastApiToken] = useState<string | null>(null);
   const [isLoadingFastApiToken, setIsLoadingFastApiToken] = useState(false);
   const [errorFastApiToken, setErrorFastApiToken] = useState<string | null>(
@@ -66,12 +52,15 @@ export function BackendTokenProvider({ children }: { children: ReactNode }) {
     await fetchToken();
   }, [fetchToken]);
 
+  const isAuthenticated = !!session.data;
+  const isPending = session.isPending;
+
   useEffect(() => {
-    if (sessionStatus === "authenticated") {
+    if (isAuthenticated) {
       if (!fastApiToken && !isLoadingFastApiToken) {
         void fetchToken();
       }
-    } else if (sessionStatus !== "loading") {
+    } else if (!isPending) {
       if (fastApiToken || isLoadingFastApiToken || errorFastApiToken) {
         setFastApiToken(null);
         setIsLoadingFastApiToken(false);
@@ -79,7 +68,8 @@ export function BackendTokenProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [
-    sessionStatus,
+    isAuthenticated,
+    isPending,
     fastApiToken,
     isLoadingFastApiToken,
     fetchToken,

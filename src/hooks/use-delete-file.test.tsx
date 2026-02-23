@@ -4,18 +4,17 @@ import { renderHook, act } from "@testing-library/react";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockAuthenticatedFetch = mock<(...args: any[]) => Promise<any>>();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockUseSession = mock<() => any>(() => ({
-  data: {
-    user: { id: "user-1" },
-    accessToken: "test-token",
-    expires: "2099-01-01",
+const mockUseBackendToken = mock(() => ({
+  fastApiToken: "test-token" as string | null,
+  isLoadingFastApiToken: false,
+  errorFastApiToken: null as string | null,
+  refreshFastApiToken: async () => {
+    /* noop */
   },
-  status: "authenticated",
 }));
 
-void mock.module("next-auth/react", () => ({
-  useSession: mockUseSession,
+void mock.module("@/hooks/use-backend-token", () => ({
+  useBackendToken: mockUseBackendToken,
 }));
 
 void mock.module("@/lib/api-client", () => ({
@@ -32,13 +31,13 @@ const { useFileDelete } = await import("./use-delete-file");
 describe("useFileDelete", () => {
   beforeEach(() => {
     mockAuthenticatedFetch.mockReset();
-    mockUseSession.mockReturnValue({
-      data: {
-        user: { id: "user-1" },
-        accessToken: "test-token",
-        expires: "2099-01-01",
+    mockUseBackendToken.mockReturnValue({
+      fastApiToken: "test-token",
+      isLoadingFastApiToken: false,
+      errorFastApiToken: null,
+      refreshFastApiToken: async () => {
+        /* noop */
       },
-      status: "authenticated",
     });
   });
 
@@ -86,9 +85,13 @@ describe("useFileDelete", () => {
   });
 
   it("sets error when not authenticated", async () => {
-    mockUseSession.mockReturnValue({
-      data: null,
-      status: "unauthenticated",
+    mockUseBackendToken.mockReturnValue({
+      fastApiToken: null,
+      isLoadingFastApiToken: false,
+      errorFastApiToken: null,
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
     });
 
     const { result } = renderHook(() => useFileDelete());
@@ -162,9 +165,13 @@ describe("useFileDelete", () => {
   });
 
   it("resets error and isPending state", async () => {
-    mockUseSession.mockReturnValue({
-      data: null,
-      status: "unauthenticated",
+    mockUseBackendToken.mockReturnValue({
+      fastApiToken: null,
+      isLoadingFastApiToken: false,
+      errorFastApiToken: null,
+      refreshFastApiToken: async () => {
+        /* noop */
+      },
     });
 
     const { result } = renderHook(() => useFileDelete());

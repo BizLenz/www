@@ -25,7 +25,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { signOut } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 
 export function NavUser({
   user,
@@ -101,16 +101,13 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={async () => {
-                const cognitoDomain =
-                  process.env.NEXT_PUBLIC_AUTH_COGNITO_DOMAIN;
-                const clientId = process.env.NEXT_PUBLIC_AUTH_COGNITO_CLIENT_ID;
-                const logoutUri = `${window.location.origin}/`;
-
-                await signOut({ redirect: false });
-
-                window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(
-                  logoutUri,
-                )}`;
+                await authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      window.location.href = "/login";
+                    },
+                  },
+                });
               }}
             >
               <LogOut />

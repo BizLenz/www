@@ -1,26 +1,27 @@
-import { auth } from "@/server/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
 export const config = {
   matcher: ["/((?!login|api|_next/static|_next/image|favicon.ico).*)"],
 };
 
-export default auth((req) => {
-  const reqUrl = new URL(req.url);
-  const isAuthenticated = !!req.auth;
+export function middleware(request: NextRequest) {
+  const sessionCookie = getSessionCookie(request);
+  const reqUrl = new URL(request.url);
 
-  if (isAuthenticated && reqUrl.pathname === "/") {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+  if (sessionCookie && reqUrl.pathname === "/") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
-  if (!isAuthenticated && reqUrl.pathname !== "/login") {
+  if (!sessionCookie && reqUrl.pathname !== "/login") {
     return NextResponse.redirect(
       new URL(
         `/login?callbackUrl=${encodeURIComponent(reqUrl.pathname + reqUrl.search)}`,
-        req.url,
+        request.url,
       ),
     );
   }
 
   return NextResponse.next();
-});
+}

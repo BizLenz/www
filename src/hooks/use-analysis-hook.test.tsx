@@ -4,18 +4,17 @@ import { renderHook, act } from "@testing-library/react";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const mockAuthenticatedFetch = mock<(...args: any[]) => Promise<any>>();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const mockUseSession = mock<() => any>(() => ({
-  data: {
-    user: { id: "user-1" },
-    accessToken: "test-token",
-    expires: "2099-01-01",
+const mockUseBackendToken = mock(() => ({
+  fastApiToken: "test-token",
+  isLoadingFastApiToken: false,
+  errorFastApiToken: null,
+  refreshFastApiToken: async () => {
+    /* noop */
   },
-  status: "authenticated",
 }));
 
-void mock.module("next-auth/react", () => ({
-  useSession: mockUseSession,
+void mock.module("@/hooks/use-backend-token", () => ({
+  useBackendToken: mockUseBackendToken,
 }));
 
 void mock.module("@/lib/api-client", () => ({
@@ -36,13 +35,13 @@ const { useAnalysis } = await import("./use-analysis-hook");
 describe("useAnalysis", () => {
   beforeEach(() => {
     mockAuthenticatedFetch.mockReset();
-    mockUseSession.mockReturnValue({
-      data: {
-        user: { id: "user-1" },
-        accessToken: "test-token",
-        expires: "2099-01-01",
+    mockUseBackendToken.mockReturnValue({
+      fastApiToken: "test-token",
+      isLoadingFastApiToken: false,
+      errorFastApiToken: null,
+      refreshFastApiToken: async () => {
+        /* noop */
       },
-      status: "authenticated",
     });
   });
 

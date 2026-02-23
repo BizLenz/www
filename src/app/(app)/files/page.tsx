@@ -6,21 +6,21 @@ import { SidebarInset } from "@/components/ui/sidebar";
 import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
 import { useFileStoreShallow } from "@/store/file-store";
-import { useSession } from "next-auth/react";
+import { useBackendToken } from "@/hooks/use-backend-token";
 import { ErrorBoundary } from "@/components/common/error-boundary";
 
 export default function Files() {
-  const { data: session } = useSession();
+  const { fastApiToken } = useBackendToken();
   const [storageUsage, setStorageUsage] = useState<number>();
 
   const { files, size, isLoading, lastFetchSuccessful, fetchFiles } =
     useFileStoreShallow();
 
   const memoizedRefetchFiles = useCallback(() => {
-    if (session) {
-      void fetchFiles(session);
+    if (fastApiToken) {
+      void fetchFiles(fastApiToken);
     }
-  }, [fetchFiles, session]);
+  }, [fetchFiles, fastApiToken]);
 
   useEffect(() => {
     setStorageUsage(size);
@@ -28,11 +28,18 @@ export default function Files() {
       lastFetchSuccessful === null &&
       files.length === 0 &&
       !isLoading &&
-      session
+      fastApiToken
     ) {
-      void fetchFiles(session);
+      void fetchFiles(fastApiToken);
     }
-  }, [size, files.length, isLoading, session, fetchFiles, lastFetchSuccessful]);
+  }, [
+    size,
+    files.length,
+    isLoading,
+    fastApiToken,
+    fetchFiles,
+    lastFetchSuccessful,
+  ]);
 
   return (
     <SidebarInset>
