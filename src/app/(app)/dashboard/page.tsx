@@ -1,8 +1,6 @@
 "use client";
 
 import { SidebarInset } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
-import { Progress } from "@/components/ui/progress";
 import {
   Box,
   ChartNoAxesColumnIncreasing,
@@ -14,47 +12,20 @@ import { Button } from "@/components/ui/button";
 import Notification from "@/components/notification";
 import { DashboardFileForm } from "@/components/dashboard/dashboard-file-form";
 import { DashboardRecentView } from "@/components/dashboard/dashboard-recent-view";
-import { useFileStoreShallow } from "@/store/file-store";
-import { useBackendToken } from "@/hooks/use-backend-token";
-
-const GIGABYTE_IN_MEGABYTES = 1024;
+import { useFilesData } from "@/hooks/use-files-data";
+import { ErrorBanner } from "@/components/common/error-banner";
+import { StorageUsageBar } from "@/components/common/storage-usage-bar";
 
 export default function Page() {
-  const { fastApiToken } = useBackendToken();
-  const [teamName, setTeamName] = useState<string>();
-  const [storageUsage, setStorageUsage] = useState<number>();
-
   const {
     files,
     size,
-    isLoading,
     error,
-    lastFetchSuccessful,
-    fetchFiles,
+    refetch,
     sumFilesNum,
     sumAnalysis,
     sumProcessing,
-  } = useFileStoreShallow();
-
-  useEffect(() => {
-    setTeamName("test");
-    setStorageUsage(size);
-    if (
-      lastFetchSuccessful === null &&
-      files.length === 0 &&
-      !isLoading &&
-      fastApiToken
-    ) {
-      void fetchFiles(fastApiToken);
-    }
-  }, [
-    files.length,
-    isLoading,
-    fetchFiles,
-    lastFetchSuccessful,
-    fastApiToken,
-    size,
-  ]);
+  } = useFilesData();
 
   const recentActivityData = files.slice(0, 5);
 
@@ -63,42 +34,17 @@ export default function Page() {
       <div className="flex flex-1 flex-col gap-4 p-10">
         {/* Title */}
         <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
-          {teamName}
+          test
         </h1>
         {/* SubTitle */}
         <div className="flex justify-between">
           <p className="text-muted-foreground text-xl">
             새로운 가능성을 분석해보세요.
           </p>
-          <div className="flex flex-1 flex-row items-center justify-end gap-4">
-            <p className="text-muted-foreground text-sm">사용중인 저장공간</p>
-            {storageUsage ? (
-              <>
-                <small className="text-sm leading-none font-medium">
-                  {storageUsage}MiB/1GiB
-                </small>
-                <Progress
-                  value={storageUsage / (GIGABYTE_IN_MEGABYTES / 100)}
-                  className="w-[20%]"
-                />
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+          <StorageUsageBar usedMiB={size} />
         </div>
         {/* Error banner */}
-        {error && (
-          <div className="flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            <span>{error}</span>
-            <button
-              onClick={() => fastApiToken && void fetchFiles(fastApiToken)}
-              className="ml-4 font-medium underline hover:no-underline"
-            >
-              다시 시도
-            </button>
-          </div>
-        )}
+        {error && <ErrorBanner error={error} onRetry={refetch} />}
         {/* ROW 1; Stats */}
         <div className="flex gap-4">
           <StatCard

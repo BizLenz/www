@@ -1,45 +1,15 @@
 "use client";
 
-import { Progress } from "@/components/ui/progress";
-import { useCallback, useEffect, useState } from "react";
 import { SidebarInset } from "@/components/ui/sidebar";
 import { FilesTable } from "@/components/files/files-table";
 import { Toaster } from "sonner";
-import { useFileStoreShallow } from "@/store/file-store";
-import { useBackendToken } from "@/hooks/use-backend-token";
 import { ErrorBoundary } from "@/components/common/error-boundary";
+import { useFilesData } from "@/hooks/use-files-data";
+import { ErrorBanner } from "@/components/common/error-banner";
+import { StorageUsageBar } from "@/components/common/storage-usage-bar";
 
 export default function Files() {
-  const { fastApiToken } = useBackendToken();
-  const [storageUsage, setStorageUsage] = useState<number>();
-
-  const { files, size, isLoading, error, lastFetchSuccessful, fetchFiles } =
-    useFileStoreShallow();
-
-  const memoizedRefetchFiles = useCallback(() => {
-    if (fastApiToken) {
-      void fetchFiles(fastApiToken);
-    }
-  }, [fetchFiles, fastApiToken]);
-
-  useEffect(() => {
-    setStorageUsage(size);
-    if (
-      lastFetchSuccessful === null &&
-      files.length === 0 &&
-      !isLoading &&
-      fastApiToken
-    ) {
-      void fetchFiles(fastApiToken);
-    }
-  }, [
-    size,
-    files.length,
-    isLoading,
-    fastApiToken,
-    fetchFiles,
-    lastFetchSuccessful,
-  ]);
+  const { files, size, error, refetch } = useFilesData();
 
   return (
     <SidebarInset>
@@ -48,39 +18,14 @@ export default function Files() {
           <h1 className="scroll-m-20 text-6xl font-extrabold tracking-tight text-balance">
             내 문서함
           </h1>
-          <div className="flex flex-1 flex-row items-center justify-end gap-4">
-            <p className="text-muted-foreground text-sm">사용중인 저장공간</p>
-            {storageUsage ? (
-              <>
-                <small className="text-sm leading-none font-medium">
-                  {storageUsage}MiB/1GiB
-                </small>
-                <Progress value={storageUsage / 10.24} className="w-[20%]" />
-              </>
-            ) : (
-              <></>
-            )}
-          </div>
+          <StorageUsageBar usedMiB={size} />
         </div>
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
-          {error && (
-            <div className="mb-4 flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-              <span>{error}</span>
-              <button
-                onClick={memoizedRefetchFiles}
-                className="ml-4 font-medium underline hover:no-underline"
-              >
-                다시 시도
-              </button>
-            </div>
-          )}
+          {error && <ErrorBanner error={error} onRetry={refetch} className="mb-4" />}
           <ErrorBoundary>
-            <FilesTable
-              data={files}
-              onRefetchFilesAction={memoizedRefetchFiles}
-            />
+            <FilesTable data={files} onRefetchFilesAction={refetch} />
           </ErrorBoundary>
         </div>
       </div>
