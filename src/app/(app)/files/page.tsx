@@ -13,7 +13,7 @@ export default function Files() {
   const { fastApiToken } = useBackendToken();
   const [storageUsage, setStorageUsage] = useState<number>();
 
-  const { files, size, isLoading, lastFetchSuccessful, fetchFiles } =
+  const { files, size, isLoading, error, lastFetchSuccessful, fetchFiles } =
     useFileStoreShallow();
 
   const memoizedRefetchFiles = useCallback(() => {
@@ -65,6 +65,17 @@ export default function Files() {
         {/* Table */}
         <div className="container mx-auto py-10">
           <Toaster richColors position="top-right" />
+          {error && (
+            <div className="mb-4 flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              <span>{error}</span>
+              <button
+                onClick={memoizedRefetchFiles}
+                className="ml-4 font-medium underline hover:no-underline"
+              >
+                다시 시도
+              </button>
+            </div>
+          )}
           <ErrorBoundary>
             <FilesTable
               data={files}

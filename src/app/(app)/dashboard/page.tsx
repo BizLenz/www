@@ -28,6 +28,7 @@ export default function Page() {
     files,
     size,
     isLoading,
+    error,
     lastFetchSuccessful,
     fetchFiles,
     sumFilesNum,
@@ -86,6 +87,18 @@ export default function Page() {
             )}
           </div>
         </div>
+        {/* Error banner */}
+        {error && (
+          <div className="flex items-center justify-between rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            <span>{error}</span>
+            <button
+              onClick={() => fastApiToken && void fetchFiles(fastApiToken)}
+              className="ml-4 font-medium underline hover:no-underline"
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
         {/* ROW 1; Stats */}
         <div className="flex gap-4">
           <StatCard

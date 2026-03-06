@@ -65,6 +65,7 @@ export const useFileStore = create<FileState>()((set, get) => ({
         error:
           "파일 데이터를 불러오는 데 실패했습니다: " + getErrorMessage(err),
         isLoading: false,
+        lastFetchSuccessful: false,
       });
     }
   },
