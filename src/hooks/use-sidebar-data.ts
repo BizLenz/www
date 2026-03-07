@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { GalleryVerticalEnd } from "lucide-react";
 import type { TeamData, UserData } from "@/types/sidebar";
@@ -31,6 +31,9 @@ export function useSidebarData(): SidebarData {
   const [isLoadingTeamData, setIsLoadingTeamData] = useState(false);
   const [teamError, setTeamError] = useState<string | null>(null);
 
+  const userFetchedRef = useRef(false);
+  const teamFetchedRef = useRef(false);
+
   const isTokenReady =
     !isLoadingFastApiToken && !errorFastApiToken && !!fastApiToken;
 
@@ -45,28 +48,27 @@ export function useSidebarData(): SidebarData {
     if (sessionStatus !== "authenticated" || !isTokenReady) return;
 
     const fetchUserData = async () => {
-      if (isLoadingUserData || userData) return;
+      if (userFetchedRef.current) return;
+      userFetchedRef.current = true;
 
       setIsLoadingUserData(true);
       setUserError(null);
 
-      if (!session.data?.user?.name) {
-        throw new Error("User name is missing");
-      }
-      if (!session.data?.user?.email) {
-        throw new Error("User email is missing");
-      }
-
       try {
-        const userData: UserData = {
+        if (!session.data?.user?.name) {
+          throw new Error("User name is missing");
+        }
+        if (!session.data?.user?.email) {
+          throw new Error("User email is missing");
+        }
+
+        setUserData({
           name: session.data.user.name,
           email: session.data.user.email,
           avatar: session.data.user.image ?? "",
-        };
-
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        setUserData(userData);
+        });
       } catch (err: unknown) {
+        userFetchedRef.current = false;
         setUserError(getErrorMessage(err));
         setUserData(null);
       } finally {
@@ -76,7 +78,8 @@ export function useSidebarData(): SidebarData {
 
     // --- DUMMY FETCH FOR DEVELOPMENT ---
     const fetchTeamData = async () => {
-      if (isLoadingTeamData || teamData) return;
+      if (teamFetchedRef.current) return;
+      teamFetchedRef.current = true;
 
       setIsLoadingTeamData(true);
       setTeamError(null);
@@ -95,9 +98,9 @@ export function useSidebarData(): SidebarData {
           },
         ];
 
-        await new Promise((resolve) => setTimeout(resolve, 1200));
         setTeamData(dummyTeamData);
       } catch (err: unknown) {
+        teamFetchedRef.current = false;
         setTeamError(getErrorMessage(err));
         setTeamData(null);
       } finally {
@@ -107,17 +110,7 @@ export function useSidebarData(): SidebarData {
 
     void fetchUserData();
     void fetchTeamData();
-  }, [
-    sessionStatus,
-    isTokenReady,
-    isLoadingUserData,
-    userData,
-    isLoadingTeamData,
-    teamData,
-    session.data?.user?.name,
-    session.data?.user?.email,
-    session.data?.user?.image,
-  ]);
+  }, [sessionStatus, isTokenReady, session.data?.user]);
 
   return {
     userData,
