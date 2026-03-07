@@ -6,8 +6,23 @@ import { getErrorMessage } from "@/lib/utils";
 import { API_ENDPOINTS } from "@/config/api";
 import { authenticatedFetch } from "@/lib/api-client";
 
+const BYTES_IN_MEGABYTE = 1_048_576;
+
+function computeSize(files: File[]): number {
+  return Number(
+    (
+      files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
+      BYTES_IN_MEGABYTE
+    ).toFixed(2),
+  );
+}
+
 export interface FileState {
   files: File[];
+  size: number;
+  sumAnalysis: number;
+  sumProcessing: number;
+  sumFilesNum: number;
   isLoading: boolean;
   error: string | null;
   lastFetchSuccessful: boolean | null;
@@ -21,6 +36,10 @@ export interface FileResponse {
 
 export const useFileStore = create<FileState>()((set, get) => ({
   files: [],
+  size: 0,
+  sumAnalysis: 0,
+  sumProcessing: 0,
+  sumFilesNum: 0,
   isLoading: false,
   error: null,
   lastFetchSuccessful: null,
@@ -54,9 +73,13 @@ export const useFileStore = create<FileState>()((set, get) => ({
         return;
       }
 
-      const validatedFiles = z.array(fileSchema).parse(data.results);
+      const files = z.array(fileSchema).parse(data.results);
       set({
-        files: validatedFiles,
+        files,
+        size: computeSize(files),
+        sumAnalysis: files.filter((f) => f.status === "completed").length,
+        sumProcessing: files.filter((f) => f.status === "processing").length,
+        sumFilesNum: files.length,
         isLoading: false,
         lastFetchSuccessful: true,
       });
@@ -71,30 +94,17 @@ export const useFileStore = create<FileState>()((set, get) => ({
   },
 }));
 
-const BYTES_IN_MEGABYTE = 1_048_576;
-
 export const useFileStoreShallow = () =>
   useFileStore(
     useShallow((state: FileState) => ({
       files: state.files,
-      size: Number(
-        (
-          state.files.reduce((acc, file) => acc + (file.file_size ?? 0), 0) /
-          BYTES_IN_MEGABYTE
-        ).toFixed(2),
-      ),
+      size: state.size,
       isLoading: state.isLoading,
       error: state.error,
       lastFetchSuccessful: state.lastFetchSuccessful,
       fetchFiles: state.fetchFiles,
-      sumAnalysis: state.files.reduce(
-        (acc, file) => acc + (file.status === "completed" ? 1 : 0),
-        0,
-      ),
-      sumProcessing: state.files.reduce(
-        (acc, file) => acc + (file.status === "processing" ? 1 : 0),
-        0,
-      ),
-      sumFilesNum: state.files.length,
+      sumAnalysis: state.sumAnalysis,
+      sumProcessing: state.sumProcessing,
+      sumFilesNum: state.sumFilesNum,
     })),
   );
