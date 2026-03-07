@@ -68,7 +68,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {isLoadingTeamData ? (
           <Skeleton className="h-10 w-full" />
         ) : teamError ? (
-          <div style={{ color: "red", padding: "8px" }}>Error: {teamError}</div>
+          <div className="text-destructive p-2 text-sm">Error: {teamError}</div>
         ) : (
           <TeamSwitcher teams={teamData} />
         )}
@@ -81,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {isLoadingUserData ? (
           <Skeleton className="h-10 w-full" />
         ) : userError ? (
-          <div style={{ color: "red", padding: "8px" }}>Error: {userError}</div>
+          <div className="text-destructive p-2 text-sm">Error: {userError}</div>
         ) : (
           <NavUser
             user={
