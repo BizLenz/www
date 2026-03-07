@@ -39,10 +39,10 @@ export function BackendTokenProvider({ children }: { children: ReactNode }) {
         errorMessage = `Invalid token response: ${err.issues[0]?.message ?? "Data format mismatch"}`;
       } else if (err instanceof Error) {
         errorMessage = err.message;
-      } else {
-        setErrorFastApiToken(errorMessage);
-        setFastApiToken(null);
       }
+
+      setErrorFastApiToken(errorMessage);
+      setFastApiToken(null);
     } finally {
       setIsLoadingFastApiToken(false);
     }
