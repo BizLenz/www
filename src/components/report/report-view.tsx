@@ -17,13 +17,12 @@ export default function ReportView({
     title,
     total_score,
     overall_assessment,
+    is_passed,
     strengths,
     weaknesses,
     improvement_suggestions,
     evaluation_criteria,
   } = result;
-
-  const isFailing = overall_assessment.includes("탈락");
 
   return (
     <div className="bg-background text-foreground min-h-screen p-4 font-sans sm:p-6 md:p-8">
@@ -40,7 +39,7 @@ export default function ReportView({
               <p
                 className={cn(
                   "text-4xl font-bold",
-                  isFailing ? "text-destructive" : "text-green-500",
+                  !is_passed ? "text-destructive" : "text-green-500",
                 )}
               >
                 {typeof total_score === "number"
@@ -58,7 +57,7 @@ export default function ReportView({
               <p
                 className={cn(
                   "text-2xl font-bold",
-                  isFailing ? "text-destructive" : "text-green-500",
+                  !is_passed ? "text-destructive" : "text-green-500",
                 )}
               >
                 {overall_assessment}
