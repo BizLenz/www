@@ -9,11 +9,13 @@ import type {
   TechnicalAnalysis,
 } from "@/types/analysis-detail-result";
 
+const NO_CACHE: RequestInit = { cache: "no-store" };
+
 export async function getResult(id: string, token: string | undefined) {
   const data = await serverFetch<AnalysisResult>(
     API_ENDPOINTS.evaluation.results(id),
     token,
-    { cache: "no-store" },
+    NO_CACHE,
   );
   return normalizeAnalysisResult(data);
 }
@@ -25,7 +27,7 @@ export async function getFinancialAnalysis(
   return serverFetch<FinancialAnalysis>(
     API_ENDPOINTS.evaluation.financial(id),
     token,
-    { cache: "no-store" },
+    NO_CACHE,
   );
 }
 
@@ -33,14 +35,16 @@ export async function getMarketAnalysis(id: string, token: string | undefined) {
   return serverFetch<MarketAnalysis>(
     API_ENDPOINTS.evaluation.market(id),
     token,
-    { cache: "no-store" },
+    NO_CACHE,
   );
 }
 
 export async function getRiskAnalysis(id: string, token: string | undefined) {
-  return serverFetch<RiskAnalysis>(API_ENDPOINTS.evaluation.risk(id), token, {
-    cache: "no-store",
-  });
+  return serverFetch<RiskAnalysis>(
+    API_ENDPOINTS.evaluation.risk(id),
+    token,
+    NO_CACHE,
+  );
 }
 
 export async function getTechnicalAnalysis(
@@ -50,6 +54,6 @@ export async function getTechnicalAnalysis(
   return serverFetch<TechnicalAnalysis>(
     API_ENDPOINTS.evaluation.technical(id),
     token,
-    { cache: "no-store" },
+    NO_CACHE,
   );
 }
