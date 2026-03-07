@@ -5,55 +5,45 @@ import {
   LoaderCircle,
   X,
 } from "lucide-react";
-import * as React from "react";
+import type { LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 type FileStatus = "pending" | "processing" | "completed" | "failed";
 
-interface StatusProps {
-  status?: FileStatus;
-}
+const STATUS_CONFIG: Record<
+  FileStatus,
+  { label: string; icon: LucideIcon; className: string }
+> = {
+  completed: { label: "완료", icon: CircleCheck, className: "text-green-500" },
+  processing: {
+    label: "분석중",
+    icon: LoaderCircle,
+    className: "animate-spin text-blue-500",
+  },
+  pending: { label: "대기중", icon: Clock, className: "text-muted-foreground" },
+  failed: { label: "실패", icon: X, className: "text-destructive" },
+};
 
-function renderStatus(status?: FileStatus) {
-  switch (status) {
-    case "completed":
-      return (
-        <div className="flex items-center gap-2">
-          <CircleCheck className="size-4 text-green-500" />
-          <span>완료</span>
-        </div>
-      );
-    case "processing":
-      return (
-        <div className="flex items-center gap-2">
-          <LoaderCircle className="size-4 animate-spin text-blue-500" />
-          <span>분석중</span>
-        </div>
-      );
-    case "pending":
-      return (
-        <div className="flex items-center gap-2">
-          <Clock className="text-muted-foreground size-4" />
-          <span>대기중</span>
-        </div>
-      );
-    case "failed":
-      return (
-        <div className="flex items-center gap-2">
-          <X className="size-4 animate-spin text-blue-500" />
-          <span>실패</span>
-        </div>
-      );
-    default:
-      return (
+export default function StatusBubble({ status }: { status?: FileStatus }) {
+  if (!status || !(status in STATUS_CONFIG)) {
+    return (
+      <Badge variant="outline">
         <div className="flex items-center gap-2">
           <FileQuestionMark className="text-muted-foreground size-4" />
           <span>Unknown</span>
         </div>
-      );
+      </Badge>
+    );
   }
-}
 
-export default function StatusBubble({ status }: StatusProps) {
-  return <Badge variant="outline">{renderStatus(status)}</Badge>;
+  const { label, icon: Icon, className } = STATUS_CONFIG[status];
+
+  return (
+    <Badge variant="outline">
+      <div className="flex items-center gap-2">
+        <Icon className={`size-4 ${className}`} />
+        <span>{label}</span>
+      </div>
+    </Badge>
+  );
 }
