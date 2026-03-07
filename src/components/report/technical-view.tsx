@@ -67,8 +67,8 @@ const TechnicalAnalysisView: React.FC<TechnicalAnalysisViewProps> = ({
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {techStackTableData.map((item, index) => (
-                    <TableRow key={index}>
+                  {techStackTableData.map((item) => (
+                    <TableRow key={item.category}>
                       <TableCell className="font-semibold">
                         {item.category}
                       </TableCell>
@@ -115,9 +115,9 @@ const TechnicalAnalysisView: React.FC<TechnicalAnalysisViewProps> = ({
             <CardContent>
               {data.security_risks.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {data.security_risks.map((risk, index) => (
+                  {data.security_risks.map((risk) => (
                     <Badge
-                      key={index}
+                      key={risk}
                       variant="destructive"
                       className="border-red-200 bg-red-50 text-red-200"
                     >

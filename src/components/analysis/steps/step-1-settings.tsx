@@ -2,14 +2,13 @@ import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ContestTypeComboBox } from "@/components/analysis/contest-type-combo-box";
+import { FIXED_ANALYSIS_SCOPE } from "@/lib/analysis-constants";
 
 interface Step1SettingsProps {
   fileId: number;
 }
 
 const EMPTY_SETTINGS: FileSettings = {};
-
-const FIXED_SCOPE = "기본분석";
 const ANALYSIS_OPTIONS = [
   "사업성 분석",
   "경쟁력 분석",
@@ -49,8 +48,8 @@ export function Step1Settings({ fileId }: Step1SettingsProps) {
         <div className="text-lg font-semibold">분석 범위 설정</div>
         <div className="space-y-1">
           <div className="flex items-center space-x-2 py-2 opacity-70">
-            <Checkbox id={FIXED_SCOPE} checked={true} disabled />
-            <Label htmlFor={FIXED_SCOPE}>{FIXED_SCOPE} (기본)</Label>
+            <Checkbox id={FIXED_ANALYSIS_SCOPE} checked={true} disabled />
+            <Label htmlFor={FIXED_ANALYSIS_SCOPE}>{FIXED_ANALYSIS_SCOPE} (기본)</Label>
           </div>
 
           {ANALYSIS_OPTIONS.map((option) => (

@@ -46,8 +46,13 @@ export function createFileColumns(options: {
       size: 300,
       cell: ({ row }) => {
         const fileName = row.getValue("file_name");
-        if (typeof fileName !== "string" || !fileName)
-          throw new Error("File name is required");
+        if (typeof fileName !== "string" || !fileName) {
+          return (
+            <div className="text-muted-foreground italic">
+              파일 이름이 존재하지 않습니다
+            </div>
+          );
+        }
         const truncatedName =
           fileName.length > 120 ? `${fileName.slice(0, 120)}...` : fileName;
 

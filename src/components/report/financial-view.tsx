@@ -55,8 +55,8 @@ const FinancialAnalysisView: React.FC<FinancialAnalysisViewProps> = ({
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.revenue_projections.map((projection, index) => (
-                      <TableRow key={index}>
+                    {data.revenue_projections.map((projection) => (
+                      <TableRow key={projection.year}>
                         <TableCell className="font-semibold">
                           {projection.year}
                         </TableCell>

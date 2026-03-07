@@ -55,9 +55,9 @@ export const ScoreChart = ({ data }: { data: EvaluationCriterion[] }) => (
               name="만점"
               radius={[4, 4, 0, 0]}
             />
-            {data.map((entry, index) => (
+            {data.map((entry) => (
               <ReferenceLine
-                key={`ref-${index}`}
+                key={`ref-${entry.category}`}
                 y={entry.min_score_required}
                 stroke="hsl(var(--destructive))"
                 strokeDasharray="3 3"

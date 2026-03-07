@@ -76,8 +76,8 @@ const RiskAnalysisView: React.FC<RiskAnalysisViewProps> = ({ data }) => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {data.risk_matrix.map((item, index) => (
-                      <TableRow key={index}>
+                    {data.risk_matrix.map((item) => (
+                      <TableRow key={item.risk}>
                         <TableCell className="font-semibold">
                           {item.risk}
                         </TableCell>

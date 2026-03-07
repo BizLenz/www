@@ -12,12 +12,15 @@ import {
 import { SidebarInset } from "@/components/ui/sidebar";
 
 export default function ResultError({
-  _error,
+  error,
   reset,
 }: {
-  _error: Error & { digest?: string };
+  error: Error & { digest?: string };
   reset: () => void;
 }) {
+  if (process.env.NODE_ENV === "development") {
+    console.error("[ResultError]", error);
+  }
   return (
     <SidebarInset>
       <div className="flex flex-1 items-center justify-center p-10">

@@ -1,16 +1,16 @@
 import { type FileSettings, useAnalyzeStore } from "@/store/analysis-store";
+import { FIXED_ANALYSIS_SCOPE } from "@/lib/analysis-constants";
 
 interface Step2ReviewProps {
   fileId: number;
 }
 
 const EMPTY_SETTINGS: FileSettings = {};
-const FIXED_SCOPE = "기본분석";
 
 export function Step2Review({ fileId }: Step2ReviewProps) {
   const settings = useAnalyzeStore((s) => s.files[fileId] ?? EMPTY_SETTINGS);
 
-  const allScopes = [FIXED_SCOPE, ...(settings.analysisScope ?? [])];
+  const allScopes = [FIXED_ANALYSIS_SCOPE, ...(settings.analysisScope ?? [])];
 
   return (
     <div>

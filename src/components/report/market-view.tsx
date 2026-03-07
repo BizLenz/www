@@ -92,16 +92,16 @@ const MarketAnalysisView: React.FC<MarketAnalysisViewProps> = ({ data }) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.competitor_analysis.map((competitor, index) => (
-                    <TableRow key={index}>
+                  {data.competitor_analysis.map((competitor) => (
+                    <TableRow key={competitor.competitor}>
                       <TableCell className="font-semibold">
                         {competitor.competitor}
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-2">
-                          {competitor.strengths.map((strength, sIdx) => (
+                          {competitor.strengths.map((strength) => (
                             <Badge
-                              key={sIdx}
+                              key={strength}
                               variant="outline"
                               className="border-green-200 bg-green-50 text-green-700"
                             >
@@ -112,9 +112,9 @@ const MarketAnalysisView: React.FC<MarketAnalysisViewProps> = ({ data }) => {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-wrap gap-2">
-                          {competitor.weaknesses.map((weakness, wIdx) => (
+                          {competitor.weaknesses.map((weakness) => (
                             <Badge
-                              key={wIdx}
+                              key={weakness}
                               variant="destructive"
                               className="border-red-200 bg-red-50 text-red-200"
                             >
@@ -140,8 +140,8 @@ const MarketAnalysisView: React.FC<MarketAnalysisViewProps> = ({ data }) => {
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {data.market_trends.map((trend, index) => (
-                  <Badge key={index} variant="secondary">
+                {data.market_trends.map((trend) => (
+                  <Badge key={trend} variant="secondary">
                     {trend}
                   </Badge>
                 ))}

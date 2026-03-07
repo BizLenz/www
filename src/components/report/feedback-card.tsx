@@ -30,8 +30,8 @@ export const FeedbackCard = ({
       </CardHeader>
       <CardContent>
         <ul className="space-y-3">
-          {items.map((item, index) => (
-            <li key={index} className="flex items-start text-sm">
+          {items.map((item) => (
+            <li key={item} className="flex items-start text-sm">
               <span
                 className={cn(
                   "mt-1 mr-2 h-1.5 w-1.5 shrink-0 rounded-full",
